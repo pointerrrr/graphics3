@@ -18,7 +18,7 @@ uniform mat4 MV;
 // vertex shader
 void main()
 {
-	vec3 LightPos = vec3(0,-1,-7);
+	vec3 LightPos = vec3(MV * vec4(0,1,-7, 1) );
 	vec3 modelViewVertex = vec3(MV * vec4( vPosition, 1.0 )); 
 	vec3 modelViewNormal = vec3(MV * vec4( vNormal, 0.0));
 	float distance = length(LightPos - modelViewVertex);
@@ -29,7 +29,7 @@ void main()
 	float specDot = dot(modelViewNormal, H);	
 	float attenuation = 1 / (distance * distance);	
 	specular = pow(max(0, specDot),10) * attenuation;
-	diffuse = diffuse * (1.0 / (1.0 + (0.25 * distance * distance)));		
+	diffuse = diffuse * (1.0 / ( 1 + 0.25 * distance * distance));		
 	
 	// transform vertex using supplied matrix
 	gl_Position = transform * vec4(vPosition, 1.0);

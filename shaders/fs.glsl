@@ -15,5 +15,5 @@ out vec4 outputColor;
 void main()
 {
 	// light intensity of 10
-	outputColor = texture( pixels, uv ) * diffuse * 10  * 0.5 + texture( pixels, uv ) * specular * 10 * 0.5 + vec4(1,1,1,1) * 0.1;	
+	outputColor = texture( pixels, uv ) * diffuse * 100 * 0.5 + texture( pixels, uv ) * specular * 100 * 0.5 + vec4(1,1,1,1) * 0.1;	
 }
