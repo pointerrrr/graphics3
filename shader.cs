@@ -12,6 +12,7 @@ public class Shader
 	public int attribute_vnrm;
 	public int attribute_vuvs;
 	public int uniform_mview;
+    public int uniform_mv;
 
 	// constructor
 	public Shader( String vertexShader, String fragmentShader )
@@ -28,7 +29,9 @@ public class Shader
 		attribute_vnrm = GL.GetAttribLocation( programID, "vNormal" );
 		attribute_vuvs = GL.GetAttribLocation( programID, "vUV" );
 		uniform_mview = GL.GetUniformLocation( programID, "transform" );
-	}
+	    uniform_mv = GL.GetUniformLocation(programID, "MV");
+
+        }
 
 	// loading shaders
 	void Load( String filename, ShaderType type, int program, out int ID )

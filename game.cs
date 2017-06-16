@@ -61,6 +61,7 @@ class Game
 		// prepare matrix for vertex shader
 		Matrix4 transform = Matrix4.CreateFromAxisAngle( new Vector3( 0, 1, 0 ), a );
 		transform *= Matrix4.CreateTranslation( 0, -4, -15 );
+	    Matrix4 MV = transform;
 		transform *= Matrix4.CreatePerspectiveFieldOfView( 1.2f, 1.3f, .1f, 1000 );
 
 		// update rotation
@@ -73,8 +74,8 @@ class Game
 			target.Bind();
 
 			// render scene to render target
-			mesh.Render( shader, transform, wood );
-			floor.Render( shader, transform, wood );
+			mesh.Render( shader, transform, MV, wood );
+			floor.Render( shader, transform, MV, wood );
 
 			// render quad
 			target.Unbind();
@@ -83,8 +84,8 @@ class Game
 		else
 		{
 			// render scene directly to the screen
-			mesh.Render( shader, transform, wood );
-			floor.Render( shader, transform, wood );
+			mesh.Render( shader, transform, MV, wood );
+			floor.Render( shader, transform, MV, wood );
 		}
 	}
 }
