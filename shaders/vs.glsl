@@ -28,8 +28,8 @@ void main()
 	vec3 H = normalize(V + lightVector);
 	float specDot = dot(modelViewNormal, H);	
 	float attenuation = 1 / (distance * distance);	
-	specular = pow(max(0, specDot),10000) * attenuation;
-	diffuse = diffuse * (1.0 / (1.0 + (0.25 * distance * distance)));	
+	specular = pow(max(0, specDot),10) * attenuation;
+	diffuse = diffuse * (1.0 / (1.0 + (0.25 * distance * distance)));		
 	
 	// transform vertex using supplied matrix
 	gl_Position = transform * vec4(vPosition, 1.0);
