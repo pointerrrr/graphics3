@@ -14,6 +14,6 @@ out vec4 outputColor;
 // fragment shader
 void main()
 {
-	// light intensity of 10
-	outputColor = texture( pixels, uv ) * diffuse * 100 * 0.5 + texture( pixels, uv ) * specular * 100 * 0.5 + vec4(1,1,1,1) * 0.1;	
+	float intensity = 100;
+	outputColor = texture( pixels, uv ) * diffuse * intensity * 0.5 + texture( pixels, uv ) * specular * intensity * 0.5 + vec4(1,1,1,1) * 0.1;	
 }
