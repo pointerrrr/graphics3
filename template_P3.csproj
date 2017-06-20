@@ -7,8 +7,8 @@
     <ProjectGuid>{9354EB6E-D674-4763-A589-3631FABE7654}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>template_P3</RootNamespace>
-    <AssemblyName>template_P3</AssemblyName>
+    <RootNamespace>Template_P3</RootNamespace>
+    <AssemblyName>Template_P3</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
