@@ -58,17 +58,17 @@ namespace Template_P3 {
             timer.Reset();
             timer.Start();
             if (keyState[Key.Left])
-                a -= 0.001f * frameDuration;
-            if(keyState[Key.Right])
                 a += 0.001f * frameDuration;
+            if(keyState[Key.Right])
+                a -= 0.001f * frameDuration;
             if (keyState[Key.Up])
-                b -= 0.001f * frameDuration;
-            if (keyState[Key.Down])
                 b += 0.001f * frameDuration;
+            if (keyState[Key.Down])
+                b -= 0.001f * frameDuration;
             if (keyState[Key.Z])
-                c -= 0.001f * frameDuration;
-            if (keyState[Key.X])
                 c += 0.001f * frameDuration;
+            if (keyState[Key.X])
+                c -= 0.001f * frameDuration;
             oldKeyboardState = keyState;
         }
     
