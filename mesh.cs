@@ -10,8 +10,8 @@ namespace Template_P3 {
 public class Mesh
 {
         // data members
-        Mesh parent;
-        int x, y, z;
+        public Mesh parent;
+        public Matrix4 modelmatrix, transform, MV;
         const float PI = 3.1415926535f;
         public Matrix4 location;
 	public ObjVertex[] vertices;			// vertex positions, model space
@@ -22,25 +22,21 @@ public class Mesh
 	int quadBufferId;						// quad buffer
 
 	// constructor
-	public Mesh( string fileName, int x, int y, int z )
+	public Mesh( string fileName,Matrix4 model )
 	{
 		MeshLoader loader = new MeshLoader();
 		loader.Load( this, fileName );
-            this.x = x;
-            this.y = y;
-            this.z = z;
+            modelmatrix = model;
 
 	}
 
-        public Mesh(string fileName, int x, int y, int z, Mesh parent)
-        {
-            MeshLoader loader = new MeshLoader();
-            loader.Load(this, fileName);
-            this.x = x;
-            this.y = y;
-            this.z = z;
-            this.parent = parent;
-        }
+    public Mesh(string fileName, Matrix4 model, Mesh parent)
+    {
+        MeshLoader loader = new MeshLoader();
+        loader.Load(this, fileName);
+        this.parent = parent;
+        modelmatrix = parent.modelmatrix * model;
+    }
 
 	// initialization; called during first render
 	public void Prepare( Shader shader )
@@ -64,13 +60,17 @@ public class Mesh
 	}
 
 	// render the mesh using the supplied shader and matrix
-	public void Render( Shader shader, Matrix4 transform, Texture texture )
+	public void Render( Shader shader, Texture texture )
 	{
-            Matrix4 loc = transform * Matrix4.CreateTranslation(x, y, z);
-            if (parent != null)
-                loc *= Matrix4.CreateTranslation(parent.x, parent.y, parent.z);
-            Matrix4 MV = loc;
-            loc *= Matrix4.CreatePerspectiveFieldOfView(1.2f, 1.3f, .1f, 1000);
+            //Matrix4 loc = transform * Matrix4.CreateTranslation(x, y, z);
+            //if (parent != null)
+            //    loc *= Matrix4.CreateTranslation(parent.x, parent.y, parent.z);
+            //Matrix4 MV = loc;
+            //loc *= Matrix4.CreatePerspectiveFieldOfView(1.2f, 1.3f, .1f, 1000);
+
+            //meshTree[i].transform = meshTree[i].modelMatrix * viewMatrix * projectionMatrix;
+
+            
 
             // on first run, prepare buffers
             Prepare( shader );
@@ -85,7 +85,7 @@ public class Mesh
 		GL.UseProgram( shader.programID );
 
 		// pass transform to vertex shader
-		GL.UniformMatrix4( shader.uniform_mview, false, ref loc );
+		GL.UniformMatrix4( shader.uniform_mview, false, ref transform);
         GL.UniformMatrix4( shader.uniform_mv, false, ref MV);
 
 		// bind interleaved vertex data

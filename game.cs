@@ -59,28 +59,38 @@ namespace Template_P3 {
             timer.Reset();
             timer.Start();
             if (keyState[Key.Left])
-                a += 0.001f * frameDuration;
+                // a += 0.001f * frameDuration;
+                scene.view *= Matrix4.CreateRotationY(-.1f);
             if(keyState[Key.Right])
-                a -= 0.001f * frameDuration;
+                // a -= 0.001f * frameDuration;
+                scene.view *= Matrix4.CreateRotationY(.1f);
             if (keyState[Key.Up])
-                b += 0.001f * frameDuration;
+                // b += 0.001f * frameDuration;
+                scene.view *= Matrix4.CreateRotationX(-.1f);
             if (keyState[Key.Down])
-                b -= 0.001f * frameDuration;
+                // b -= 0.001f * frameDuration;
+                scene.view *= Matrix4.CreateRotationX(.1f);
             if (keyState[Key.Z])
-                c += 0.001f * frameDuration;
+                // c += 0.001f * frameDuration;
+                scene.view *= Matrix4.CreateRotationZ(-.1f);
             if (keyState[Key.X])
-                c -= 0.001f * frameDuration;
+                // c -= 0.001f * frameDuration;
+                scene.view *= Matrix4.CreateRotationZ(.1f);
 
             if (keyState[Key.W])
-                z += 0.001f * frameDuration;
+                // z += 0.001f * frameDuration;
+                scene.view *= Matrix4.CreateTranslation(0,0,1);
             if (keyState[Key.A])
-                x += 0.001f * frameDuration;
+                //x += 0.001f * frameDuration;
+                scene.view *= Matrix4.CreateTranslation(1, 0, 0);
             if (keyState[Key.S])
-                z -= 0.001f * frameDuration;
+                // z -= 0.001f * frameDuration;
+                scene.view *= Matrix4.CreateTranslation(0, 0, -1);
             if (keyState[Key.D])
-                x -= 0.001f * frameDuration;
+                //x -= 0.001f * frameDuration;
+                scene.view *= Matrix4.CreateTranslation(-1, 0, 0);
             if (keyState[Key.ControlLeft] && keyState[Key.ShiftLeft])
-            { a = PI / 2f; b = 0; c = 0; x = 0; y = -4; z = -15; }
+                scene.view = Matrix4.Identity;
           
             oldKeyboardState = keyState;
         }
