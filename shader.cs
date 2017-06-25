@@ -16,7 +16,6 @@ namespace Template_P3 {
         public int uniform_mv;
         public int uniform_lightposition;
         public int uniform_lightintensity;
-        public int uniform_light;
         public int uniform_ambient;
 
 
@@ -36,9 +35,8 @@ namespace Template_P3 {
 		    attribute_vuvs = GL.GetAttribLocation( programID, "vUV" );
 		    uniform_mview = GL.GetUniformLocation( programID, "transform" );
 	        uniform_mv = GL.GetUniformLocation(programID, "MV");
-	        uniform_lightposition = GL.GetUniformLocation(programID, "lpos");
-	        uniform_lightintensity = GL.GetUniformLocation(programID, "lint");
-	        uniform_ambient = GL.GetUniformLocation(programID, "ambient");
+	        uniform_lightposition = GL.GetUniformLocation(programID, "light.position");
+	        uniform_lightintensity = GL.GetUniformLocation(programID, "light.intensity");
         }
 
 	    // loading shaders
