@@ -12,7 +12,6 @@ in vec3 vPosition;			// untransformed vertex position
 out vec4 normal;			// transformed vertex normal
 out vec2 uv;		
 out vec3 Pos;
-out vec3 intensity;		
 out float diffuse;
 out float specular;
 
@@ -24,8 +23,6 @@ uniform mat4 MV;
 // vertex shader
 void main()
 {
-	intensity = lint;
-	//vec3 LightPos = vec3(MV * vec4(lpos, 1.0) );
 	vec3 LightPos = lpos;
 	vec3 modelViewVertex = vec3(MV * vec4( vPosition, 1.0 )); 
 	vec3 modelViewNormal = vec3(MV * vec4( vNormal, 0.0));

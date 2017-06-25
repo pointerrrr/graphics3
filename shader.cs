@@ -17,6 +17,7 @@ namespace Template_P3 {
         public int uniform_lightposition;
         public int uniform_lightintensity;
         public int uniform_light;
+        public int uniform_ambient;
 
 
         // constructor
@@ -37,6 +38,7 @@ namespace Template_P3 {
 	        uniform_mv = GL.GetUniformLocation(programID, "MV");
 	        uniform_lightposition = GL.GetUniformLocation(programID, "lpos");
 	        uniform_lightintensity = GL.GetUniformLocation(programID, "lint");
+	        uniform_ambient = GL.GetUniformLocation(programID, "ambient");
         }
 
 	    // loading shaders
@@ -49,12 +51,6 @@ namespace Template_P3 {
 		    GL.AttachShader( program, ID );
 		    Console.WriteLine( GL.GetShaderInfoLog( ID ) );
 	    }
-    }
-
-    struct Light
-    {
-        public Vector3 position;
-        public Vector3 intensity;
     }
 
 } // namespace Template_P3

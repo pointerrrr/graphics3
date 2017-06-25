@@ -7,8 +7,8 @@ namespace Template_P3 {
 
 // mesh and loader based on work by JTalton; http://www.opentk.com/node/642
 
-public class Mesh
-{
+    public class Mesh
+    {
         // data members
         Mesh parent;
         int x, y, z;
@@ -21,7 +21,7 @@ public class Mesh
 	    int triangleBufferId;					// triangle buffer
 	    int quadBufferId;						// quad buffer
 
-	    // constructor
+        // constructor
 	    public Mesh( string fileName, int x, int y, int z )
 	    {
 		    MeshLoader loader = new MeshLoader();
@@ -87,11 +87,13 @@ public class Mesh
 		    // enable shader
 		    GL.UseProgram( shader.programID );
 
-            Vector3 position = new Vector3(0, 0, 0);
+            Vector3 position = new Vector3(0, 10, 0);
             Vector3 intensity = new Vector3(1000, 1000, 1000);
+            Vector4 ambient = new Vector4(1,1,1,1);
 
 	        GL.Uniform3(shader.uniform_lightintensity, ref intensity);
 	        GL.Uniform3(shader.uniform_lightposition, ref position);
+            GL.Uniform4(shader.uniform_ambient, ref ambient);
 
             
 
@@ -151,11 +153,6 @@ public class Mesh
 		    public int Index0, Index1, Index2, Index3;
 	    }
 
-    [StructLayout(LayoutKind.Sequential)]
-    public struct Light
-    {
-        public Vector3 position, intensity;
-    }
     }
 
     
