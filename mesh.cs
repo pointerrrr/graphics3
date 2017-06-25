@@ -9,7 +9,11 @@ namespace Template_P3 {
 
 public class Mesh
 {
-	// data members
+        // data members
+        Mesh parent;
+        int x, y, z;
+        const float PI = 3.1415926535f;
+        public Matrix4 location;
 	public ObjVertex[] vertices;			// vertex positions, model space
 	public ObjTriangle[] triangles;			// triangles (3 vertex indices)
 	public ObjQuad[] quads;					// quads (4 vertex indices)
@@ -18,11 +22,25 @@ public class Mesh
 	int quadBufferId;						// quad buffer
 
 	// constructor
-	public Mesh( string fileName )
+	public Mesh( string fileName, int x, int y, int z )
 	{
 		MeshLoader loader = new MeshLoader();
 		loader.Load( this, fileName );
+            this.x = x;
+            this.y = y;
+            this.z = z;
+
 	}
+
+        public Mesh(string fileName, int x, int y, int z, Mesh parent)
+        {
+            MeshLoader loader = new MeshLoader();
+            loader.Load(this, fileName);
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            this.parent = parent;
+        }
 
 	// initialization; called during first render
 	public void Prepare( Shader shader )
@@ -46,10 +64,16 @@ public class Mesh
 	}
 
 	// render the mesh using the supplied shader and matrix
-	public void Render( Shader shader, Matrix4 transform, Matrix4 MV, Texture texture )
+	public void Render( Shader shader, Matrix4 transform, Texture texture )
 	{
-		// on first run, prepare buffers
-		Prepare( shader );
+            Matrix4 loc = transform * Matrix4.CreateTranslation(x, y, z);
+            if (parent != null)
+                loc *= Matrix4.CreateTranslation(parent.x, parent.y, parent.z);
+            Matrix4 MV = loc;
+            loc *= Matrix4.CreatePerspectiveFieldOfView(1.2f, 1.3f, .1f, 1000);
+
+            // on first run, prepare buffers
+            Prepare( shader );
 
 		// enable texture
 		int texLoc = GL.GetUniformLocation( shader.programID, "pixels" );
@@ -61,7 +85,7 @@ public class Mesh
 		GL.UseProgram( shader.programID );
 
 		// pass transform to vertex shader
-		GL.UniformMatrix4( shader.uniform_mview, false, ref transform );
+		GL.UniformMatrix4( shader.uniform_mview, false, ref loc );
         GL.UniformMatrix4( shader.uniform_mv, false, ref MV);
 
 		// bind interleaved vertex data
@@ -94,8 +118,10 @@ public class Mesh
 		GL.UseProgram( 0 );
 	}
 
-	// layout of a single vertex
-	[StructLayout(LayoutKind.Sequential)] public struct ObjVertex
+       
+
+        // layout of a single vertex
+        [StructLayout(LayoutKind.Sequential)] public struct ObjVertex
 	{
 		public Vector2 TexCoord;
 		public Vector3 Normal;

@@ -85,7 +85,7 @@ public class OpenTKApp : GameWindow
 		// do OpenGL rendering
 		game.RenderGL();
 		// swap buffers
-		SwapBuffers();
+	SwapBuffers();
 	}
 	public static void Main( string[] args ) 
 	{ 
