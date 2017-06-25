@@ -12,6 +12,7 @@ public class Mesh
         // data members
         public Mesh parent;
         public Matrix4 modelmatrix, transform, MV;
+        Texture texture;
         const float PI = 3.1415926535f;
         public Matrix4 location;
 	public ObjVertex[] vertices;			// vertex positions, model space
@@ -22,18 +23,20 @@ public class Mesh
 	int quadBufferId;						// quad buffer
 
 	// constructor
-	public Mesh( string fileName,Matrix4 model )
+	public Mesh( string fileName,Matrix4 model, Texture text = null )
 	{
 		MeshLoader loader = new MeshLoader();
 		loader.Load( this, fileName );
+            texture = text;
             modelmatrix = model;
 
 	}
 
-    public Mesh(string fileName, Matrix4 model, Mesh parent)
+    public Mesh(string fileName, Matrix4 model, Mesh parent, Texture text = null)
     {
         MeshLoader loader = new MeshLoader();
         loader.Load(this, fileName);
+            texture = text;
         this.parent = parent;
         modelmatrix = parent.modelmatrix * model;
     }
@@ -60,7 +63,7 @@ public class Mesh
 	}
 
 	// render the mesh using the supplied shader and matrix
-	public void Render( Shader shader, Texture texture )
+	public void Render( Shader shader )
 	{
             //Matrix4 loc = transform * Matrix4.CreateTranslation(x, y, z);
             //if (parent != null)
@@ -75,11 +78,14 @@ public class Mesh
             // on first run, prepare buffers
             Prepare( shader );
 
-		// enable texture
-		int texLoc = GL.GetUniformLocation( shader.programID, "pixels" );
-		GL.Uniform1( texLoc, 0 );
-		GL.ActiveTexture( TextureUnit.Texture0 );
-		GL.BindTexture( TextureTarget.Texture2D, texture.id );
+            // enable texture
+            if (texture != null)
+            {
+                int texLoc = GL.GetUniformLocation(shader.programID, "pixels");
+                GL.Uniform1(texLoc, 0);
+                GL.ActiveTexture(TextureUnit.Texture0);
+                GL.BindTexture(TextureTarget.Texture2D, texture.id);
+            }
 
 		// enable shader
 		GL.UseProgram( shader.programID );

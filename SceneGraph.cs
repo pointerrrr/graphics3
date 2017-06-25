@@ -15,7 +15,7 @@ namespace Template_P3
         Shader shader;
         Mesh mesh, floor;						// a mesh to draw using OpenGL
         Texture wood;                           // texture to use for rendering
-        List<Mesh> lijst = new List<Mesh>();
+        public List<Mesh> lijst = new List<Mesh>();
         public Matrix4 view, projection;
         
 
@@ -26,10 +26,10 @@ namespace Template_P3
             shader = new Shader("../../shaders/vs.glsl", "../../shaders/fs.glsl");
             wood = new Texture("../../assets/wood.jpg");
             // load teapot
-             lijst.Add(new Mesh("../../assets/teapot.obj",Matrix4.CreateTranslation(-16,0,-15)));
-            lijst.Add(new Mesh("../../assets/teapot.obj", Matrix4.CreateTranslation(16,0,0), lijst[0]));
-            lijst.Add(new Mesh("../../assets/teapot.obj", Matrix4.CreateTranslation(16,0,0),lijst[1]));
-            lijst.Add(new Mesh("../../assets/floor.obj", Matrix4.CreateTranslation(-16,16,0), lijst[2]));
+            // lijst.Add(new Mesh("../../assets/teapot.obj",Matrix4.CreateTranslation(-16,0,-15), wood));
+           // lijst.Add(new Mesh("../../assets/teapot.obj", Matrix4.CreateTranslation(16,0,0), lijst[0], wood));
+           // lijst.Add(new Mesh("../../assets/teapot.obj", Matrix4.CreateTranslation(16,0,0),lijst[1], wood));
+           // lijst.Add(new Mesh("../../assets/summoner_rift.obj", Matrix4.CreateTranslation(0,-18,0)));
 
 
         }
@@ -42,7 +42,7 @@ namespace Template_P3
                 mesh.transform = mesh.modelmatrix * view;
                 mesh.MV = mesh.modelmatrix;
                 mesh.transform *= projection;
-                mesh.Render(shader, wood);
+                mesh.Render(shader);
             }
             // render scene to render target
 
