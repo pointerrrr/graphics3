@@ -26,12 +26,12 @@ namespace Template_P3
             shader = new Shader("../../shaders/vs.glsl", "../../shaders/fs.glsl");
             wood = new Texture("../../assets/wood.jpg");
             // load teapot
-             lijst.Add(new Mesh("../../assets/teapot.obj",Matrix4.CreateTranslation(-8,0,-15)));
-            lijst.Add(new Mesh("../../assets/teapot.obj", Matrix4.CreateTranslation(8,0,0), lijst[0]));
-            //lijst.Add(new Mesh("../../assets/floor.obj", 0, 0, -15, lijst[1]));
-            //lijst.Add(new Mesh("../../assets/teapot.obj", 0, 0, -15, lijst[2]));
+             lijst.Add(new Mesh("../../assets/teapot.obj",Matrix4.CreateTranslation(-16,0,-15)));
+            lijst.Add(new Mesh("../../assets/teapot.obj", Matrix4.CreateTranslation(16,0,0), lijst[0]));
+            lijst.Add(new Mesh("../../assets/teapot.obj", Matrix4.CreateTranslation(16,0,0),lijst[1]));
+            lijst.Add(new Mesh("../../assets/floor.obj", Matrix4.CreateTranslation(-16,16,0), lijst[2]));
 
-            
+
         }
 
         public void render (Matrix4 camera)
