@@ -82,9 +82,17 @@ namespace Template_P3 {
                 cam_pos -= new Vector3(direction.Z, 0, direction.X);
             if (keyState[Key.D])
                 cam_pos += new Vector3(direction.Z, 0, direction.X);
+            if (keyState[Key.Q])
+                cam_pos -= new Vector3(0, 1, 0);
+            if (keyState[Key.E])
+                cam_pos += new Vector3(0, 1, 0);
 
             if (keyState[Key.ControlLeft] && keyState[Key.ShiftLeft])
-                scene.view = Matrix4.Identity;
+            {
+                cam_x = 0;
+                cam_z = -90;
+                cam_pos = new Vector3(0,0,0);
+            }
           
             oldKeyboardState = keyState;
         }
