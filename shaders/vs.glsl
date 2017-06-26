@@ -1,24 +1,33 @@
 ﻿#version 330
 //based off of http://www.learnopengles.com/android-lesson-two-ambient-and-diffuse-lighting/
+// light struct
+struct Light
+{
+	vec3 position;
+	vec3 intensity;
+};
+
 // shader input
 in vec2 vUV;				// vertex uv coordinate
 in vec3 vNormal;			// untransformed vertex normal
 in vec3 vPosition;			// untransformed vertex position
 
+
 // shader output
 out vec4 normal;			// transformed vertex normal
-out vec2 uv;		
-out vec3 Pos;		
+out vec2 uv;
 out float diffuse;
 out float specular;
 
+// uniform variables
 uniform mat4 transform;
 uniform mat4 MV;
+uniform Light light;
  
 // vertex shader
 void main()
 {
-	vec3 LightPos = vec3(MV * vec4(-3,5,-10, 1) );
+	vec3 LightPos = light.position;
 	vec3 modelViewVertex = vec3(MV * vec4( vPosition, 1.0 )); 
 	vec3 modelViewNormal = vec3(MV * vec4( vNormal, 0.0));
 	float distance = length(LightPos - modelViewVertex);
@@ -37,3 +46,4 @@ void main()
 	normal = transform * vec4( vNormal, 0.0f );
 	uv = vUV;
 }
+
