@@ -17,7 +17,7 @@ namespace Template_P3
         Texture wood;                           // texture to use for rendering
         public List<Mesh> lijst = new List<Mesh>();
         const float PI = 3.1415926535f;
-        public float rotation =  PI;
+        public float rotation =  0;
         public Matrix4 view, projection;
         
 
