@@ -103,7 +103,7 @@ namespace Template_P3 {
             
 
             // pass transform to vertex shader
-            GL.UniformMatrix4( shader.uniform_mview, false, ref loc );
+            GL.UniformMatrix4( shader.uniform_mview, false, ref transform );
             GL.UniformMatrix4( shader.uniform_mv, false, ref MV);
 
 		    // bind interleaved vertex data
