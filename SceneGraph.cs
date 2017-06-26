@@ -17,6 +17,7 @@ namespace Template_P3
         Texture wood;                           // texture to use for rendering
         public List<Mesh> lijst = new List<Mesh>();
         const float PI = 3.1415926535f;
+        float rotation = PI;
         public Matrix4 view, projection;
         
 
@@ -32,7 +33,7 @@ namespace Template_P3
             Texture chair = new Texture("../../assets/car/chair.jpg");
             Texture feuxl = new Texture("../../assets/car/feuxl.jpg");
             // load teapot
-            Mesh car = new Mesh("../../assets/car/frame.obj", /*Matrix4.Identity*/ Matrix4.CreateRotationY(PI), frame);
+            Mesh car = new Mesh("../../assets/car/frame.obj", Matrix4.CreateRotationY(rotation), frame);
             lijst.Add(new Mesh("../../assets/teapot.obj", Matrix4.CreateTranslation(-16,0,-15) , wood));
             lijst.Add(new Mesh("../../assets/teapot.obj", Matrix4.CreateTranslation(16,0,0), lijst[0], wood));
             lijst.Add(car);
@@ -43,10 +44,18 @@ namespace Template_P3
             lijst.Add(new Mesh("../../assets/car/metal parts.obj", Matrix4.Identity, car, metal));
             lijst.Add(new Mesh("../../assets/car/seats.obj", Matrix4.Identity, car, chair));
             lijst.Add(new Mesh("../../assets/car/steering wheel.obj", Matrix4.Identity, car, wood));
-            lijst.Add(new Mesh("../../assets/car/wheel.obj",  Matrix4.CreateTranslation(0, 0, 0.66f)*Matrix4.CreateRotationY((float)Math.PI) , car, tire));
-            lijst.Add(new Mesh("../../assets/car/wheel.obj",  Matrix4.CreateTranslation(0, 0, 9.25f)*Matrix4.CreateRotationY((float)Math.PI) , car, tire));
-            lijst.Add(new Mesh("../../assets/car/wheel.obj", Matrix4.Identity, car, tire));
-            lijst.Add(new Mesh("../../assets/car/wheel.obj", Matrix4.CreateTranslation(0, 0, -8.5f), car, tire));
+
+            //rechts achter
+            lijst.Add(new Mesh("../../assets/car/test.obj",  Matrix4.CreateTranslation(2.6f,-1.8f,4f)*Matrix4.CreateRotationY((float)Math.PI + rotation) , car, tire));
+
+            //rechts voor
+            lijst.Add(new Mesh("../../assets/car/test.obj",  Matrix4.CreateTranslation(2.6f,-1.8f,-4.6f)*Matrix4.CreateRotationY((float)Math.PI + rotation) , car, tire));
+
+            //links voor
+            lijst.Add(new Mesh("../../assets/car/test.obj", Matrix4.CreateTranslation(2.6f,-1.8f,4.6f)* Matrix4.CreateRotationY(rotation), car, tire));
+
+            //links achter
+            lijst.Add(new Mesh("../../assets/car/test.obj", Matrix4.CreateTranslation(2.6f,-1.8f,-4f) * Matrix4.CreateRotationY(rotation), car, tire));
 
         }
 
