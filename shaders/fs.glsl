@@ -16,4 +16,5 @@ void main()
 {
 	float intensity = 100;
 	outputColor = texture( pixels, uv ) * diffuse * intensity * 0.5 + texture( pixels, uv ) * specular * intensity * 0.5 + vec4(1,1,1,1) * 0.1;	
+	//outputColor = texture(pixels, uv);
 }

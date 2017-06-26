@@ -25,11 +25,26 @@ namespace Template_P3
             projection = Matrix4.CreatePerspectiveFieldOfView(1.2f, 1.3f, .1f, 1000);
             shader = new Shader("../../shaders/vs.glsl", "../../shaders/fs.glsl");
             wood = new Texture("../../assets/wood.jpg");
+            Texture tire = new Texture("../../assets/car/tire.jpg");
+            Texture frame = new Texture("../../assets/car/black.png");
+            Texture metal = new Texture("../../assets/car/metal.jpg");
+            Texture chair = new Texture("../../assets/car/chair.jpg");
             // load teapot
-             lijst.Add(new Mesh("../../assets/teapot.obj", Matrix4.CreateTranslation(-16,0,-15) , wood));
+            Mesh car = new Mesh("../../assets/car/frame.obj", Matrix4.Identity, frame);
+            lijst.Add(new Mesh("../../assets/teapot.obj", Matrix4.CreateTranslation(-16,0,-15) , wood));
             lijst.Add(new Mesh("../../assets/teapot.obj", Matrix4.CreateTranslation(16,0,0), lijst[0], wood));
-            lijst.Add(new Mesh("../../assets/teapot.obj", Matrix4.CreateTranslation(16,0,0),lijst[1], wood));
+            lijst.Add(car);
+            
+            
 
+            lijst.Add(new Mesh("../../assets/car/back lights.obj", Matrix4.Identity, car, wood));
+            lijst.Add(new Mesh("../../assets/car/metal parts.obj", Matrix4.Identity, car, metal));
+            lijst.Add(new Mesh("../../assets/car/seats.obj", Matrix4.Identity, car, chair));
+            lijst.Add(new Mesh("../../assets/car/steering wheel.obj", Matrix4.Identity, car, wood));
+            lijst.Add(new Mesh("../../assets/car/wheel.obj", Matrix4.CreateRotationY((float)Math.PI) * Matrix4.CreateTranslation(0, 0, 0.66f), car, tire));
+            lijst.Add(new Mesh("../../assets/car/wheel.obj", Matrix4.CreateRotationY((float)Math.PI) * Matrix4.CreateTranslation(0, 0, 9.25f), car, tire));
+            lijst.Add(new Mesh("../../assets/car/wheel.obj", Matrix4.Identity, car, tire));
+            lijst.Add(new Mesh("../../assets/car/wheel.obj", Matrix4.CreateTranslation(0, 0, -8.5f), car, tire));
 
         }
 
