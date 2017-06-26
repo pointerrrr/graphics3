@@ -35,7 +35,7 @@ namespace Template_P3 {
 	    {
             Console.WriteLine("Press Left-Shift to reset view");
             Console.WriteLine("Press right shift to reset speed");
-            Console.WriteLine("Press Escape to add an model.");
+            Console.WriteLine("Press Tab to add an model.");
             scene = new SceneGraph();
 		    // initialize stopwatch
 		    timer = new Stopwatch();
@@ -52,7 +52,6 @@ namespace Template_P3 {
 	    public void Tick()
 	    {
 		    screen.Clear( 0 );
-		    screen.Print( "hello world", 2, 2, 0xffff00 );
 	    }
 
         public void Control(KeyboardState keyState)
@@ -86,7 +85,6 @@ namespace Template_P3 {
                 cam_pos -= new Vector3(0, 1, 0) * speed;
             if (keyState[Key.E])
                 cam_pos += new Vector3(0, 1, 0) * speed;
-
             if (keyState[Key.ShiftLeft])
             {
                 cam_x = 0;
@@ -104,7 +102,7 @@ namespace Template_P3 {
                 speed = 0;
            if (keyState[Key.ControlLeft])
                 speed = 1;
-            if (keyState[Key.Escape])
+            if (keyState[Key.Tab])
             {
                 teller = 0; pressed = true;
                 Console.WriteLine("Please enter in the Location of obj file. Example: C:\\Users\\Documents\\mesh.obj");

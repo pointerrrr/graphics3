@@ -26,7 +26,7 @@ namespace Template_P3
             shader = new Shader("../../shaders/vs.glsl", "../../shaders/fs.glsl");
             wood = new Texture("../../assets/wood.jpg");
             // load teapot
-             lijst.Add(new Mesh("../../assets/teapot.obj",Matrix4.CreateTranslation(-16,0,-15), wood));
+             lijst.Add(new Mesh("../../assets/teapot.obj", Matrix4.CreateTranslation(-16,0,-15) , wood));
             lijst.Add(new Mesh("../../assets/teapot.obj", Matrix4.CreateTranslation(16,0,0), lijst[0], wood));
             lijst.Add(new Mesh("../../assets/teapot.obj", Matrix4.CreateTranslation(16,0,0),lijst[1], wood));
 
