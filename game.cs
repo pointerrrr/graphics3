@@ -27,6 +27,8 @@ namespace Template_P3 {
 	    ScreenQuad quad;						// screen filling quad for post processing
 	    bool useRenderTarget = true;
         private  KeyboardState oldKeyboardState = OpenTK.Input.Keyboard.GetState();
+        private Vector3 cam_pos;
+        private float cam_x, cam_z = -90;
 
         // initialize
         public void Init()
@@ -58,7 +60,7 @@ namespace Template_P3 {
             float frameDuration = timer.ElapsedMilliseconds;
             timer.Reset();
             timer.Start();
-            Vector3 direction = new Vector3((float)Math.Sin(cam_x   ) * (float)Math.Sin(cam_z  ), (float)Math.Cos(cam_z  ), (float)Math.Cos(cam_x ) * (float)Math.Sin(cam_z ));
+            Vector3 direction = new Vector3((float)Math.Sin(cam_x) * (float)Math.Sin(cam_z), (float)Math.Cos(cam_z), (float)Math.Cos(cam_x) * (float)Math.Sin(cam_z));
 
             if (keyState[Key.Left])
                 cam_x -= 0.1f;
@@ -73,17 +75,17 @@ namespace Template_P3 {
             if (keyState[Key.X])
                 cam_dir.Z += 0.1f;*/
             if (keyState[Key.W])
-                cam_pos -= new Vector3(-direction.X, 0, direction.Z);
+                cam_pos -= new Vector3(-direction.X, 0, direction.Z) * speed;
             if (keyState[Key.S])
-                cam_pos += new Vector3(-direction.X, 0, direction.Z);
+                cam_pos += new Vector3(-direction.X, 0, direction.Z) * speed;
             if (keyState[Key.A])
-                cam_pos -= new Vector3(direction.Z, 0, direction.X);
+                cam_pos -= new Vector3(direction.Z, 0, direction.X) * speed;
             if (keyState[Key.D])
-                cam_pos += new Vector3(direction.Z, 0, direction.X);
+                cam_pos += new Vector3(direction.Z, 0, direction.X) * speed;
             if (keyState[Key.Q])
-                cam_pos -= new Vector3(0, 1, 0);
+                cam_pos -= new Vector3(0, 1, 0) * speed;
             if (keyState[Key.E])
-                cam_pos += new Vector3(0, 1, 0);
+                cam_pos += new Vector3(0, 1, 0) * speed;
 
             if (keyState[Key.ShiftLeft])
             {
@@ -143,10 +145,6 @@ namespace Template_P3 {
 	        scene.view *= Matrix4.CreateTranslation(cam_pos);
 	        scene.view *= Matrix4.CreateRotationY(cam_x);
 	        scene.view *= Matrix4.CreateRotationX(cam_z + 90);
-            // prepare matrix for vertex shader
-            // Matrix4 transform = Matrix4.CreateFromAxisAngle(new Vector3(0, 1, 0), a); 
-            // transform *= Matrix4.CreateFromAxisAngle(new Vector3(1, 0, 0), b);
-            // transform *= Matrix4.CreateFromAxisAngle(new Vector3(0, 0, 1), c);
             Matrix4 transform =Matrix4.CreateRotationY(a);
             transform *= Matrix4.CreateRotationZ(c);
             transform *= Matrix4.CreateRotationX(b);
