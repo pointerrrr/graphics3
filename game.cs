@@ -25,6 +25,8 @@ namespace Template_P3 {
         RenderTarget target;					// intermediate render target
 	    ScreenQuad quad;						// screen filling quad for post processing
 	    bool useRenderTarget = true;
+        private Vector3 cam_pos;
+        private float cam_x , cam_z = -90;
         private  KeyboardState oldKeyboardState = OpenTK.Input.Keyboard.GetState();
 
         // initialize
@@ -58,37 +60,29 @@ namespace Template_P3 {
             float frameDuration = timer.ElapsedMilliseconds;
             timer.Reset();
             timer.Start();
-            if (keyState[Key.Left])
-                // a += 0.001f * frameDuration;
-                scene.view *= Matrix4.CreateRotationY(-.1f);
-            if(keyState[Key.Right])
-                // a -= 0.001f * frameDuration;
-                scene.view *= Matrix4.CreateRotationY(.1f);
-            if (keyState[Key.Up])
-                // b += 0.001f * frameDuration;
-                scene.view *= Matrix4.CreateRotationX(-.1f);
-            if (keyState[Key.Down])
-                // b -= 0.001f * frameDuration;
-                scene.view *= Matrix4.CreateRotationX(.1f);
-            if (keyState[Key.Z])
-                // c += 0.001f * frameDuration;
-                scene.view *= Matrix4.CreateRotationZ(-.1f);
-            if (keyState[Key.X])
-                // c -= 0.001f * frameDuration;
-                scene.view *= Matrix4.CreateRotationZ(.1f);
+            Vector3 direction = new Vector3((float)Math.Sin(cam_x   ) * (float)Math.Sin(cam_z  ), (float)Math.Cos(cam_z  ), (float)Math.Cos(cam_x ) * (float)Math.Sin(cam_z ));
 
+            if (keyState[Key.Left])
+                cam_x -= 0.1f;
+            if (keyState[Key.Right])
+                cam_x += 0.1f;
+            if (keyState[Key.Up])
+                cam_z -= 0.1f;
+            if (keyState[Key.Down])
+                cam_z += 0.1f;
+            /*if (keyState[Key.Z])
+                cam_dir.Z -= 0.1f;
+            if (keyState[Key.X])
+                cam_dir.Z += 0.1f;*/
             if (keyState[Key.W])
-                // z += 0.001f * frameDuration;
-                scene.view *= Matrix4.CreateTranslation(0,0,1);
-            if (keyState[Key.A])
-                //x += 0.001f * frameDuration;
-                scene.view *= Matrix4.CreateTranslation(1, 0, 0);
+                cam_pos -= new Vector3(-direction.X, 0, direction.Z);
             if (keyState[Key.S])
-                // z -= 0.001f * frameDuration;
-                scene.view *= Matrix4.CreateTranslation(0, 0, -1);
+                cam_pos += new Vector3(-direction.X, 0, direction.Z);
+            if (keyState[Key.A])
+                cam_pos -= new Vector3(direction.Z, 0, direction.X);
             if (keyState[Key.D])
-                //x -= 0.001f * frameDuration;
-                scene.view *= Matrix4.CreateTranslation(-1, 0, 0);
+                cam_pos += new Vector3(direction.Z, 0, direction.X);
+
             if (keyState[Key.ControlLeft] && keyState[Key.ShiftLeft])
                 scene.view = Matrix4.Identity;
           
@@ -99,14 +93,19 @@ namespace Template_P3 {
 	    // tick for OpenGL rendering code
 	    public void RenderGL()
 	    {
-            // measure frame duration
-            
+	        // measure frame duration
+            scene.view = Matrix4.Identity;
+	        scene.view *= Matrix4.CreateTranslation(cam_pos);
+            scene.view *= Matrix4.CreateRotationY(cam_x);
+	        scene.view *= Matrix4.CreateRotationX(cam_z+90);
+
+
 
             // prepare matrix for vertex shader
-           // Matrix4 transform = Matrix4.CreateFromAxisAngle(new Vector3(0, 1, 0), a); 
-           // transform *= Matrix4.CreateFromAxisAngle(new Vector3(1, 0, 0), b);
-	       // transform *= Matrix4.CreateFromAxisAngle(new Vector3(0, 0, 1), c);
-           Matrix4 transform =Matrix4.CreateRotationY(a);
+            // Matrix4 transform = Matrix4.CreateFromAxisAngle(new Vector3(0, 1, 0), a); 
+            // transform *= Matrix4.CreateFromAxisAngle(new Vector3(1, 0, 0), b);
+            // transform *= Matrix4.CreateFromAxisAngle(new Vector3(0, 0, 1), c);
+            Matrix4 transform =Matrix4.CreateRotationY(a);
             transform *= Matrix4.CreateRotationZ(c);
             transform *= Matrix4.CreateRotationX(b);
             transform *= Matrix4.CreateTranslation(x, y, z);
