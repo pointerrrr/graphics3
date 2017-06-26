@@ -14,25 +14,26 @@ namespace Template_P3 {
     {
 	    // member variables
 	    public Surface screen;					// background surface for printing etc.
-
+        float speed = 1;
+        public bool pressed;
 	    const float PI = 3.1415926535f;			// PI
         private float a = PI/2f, b = 0, c = 0, x =0, y =0, z =0;		// teapot rotation angle
-	    Stopwatch timer;						// timer for measuring frame duration
-							// shader to use for rendering
+	    Stopwatch timer;                        // timer for measuring frame duration
+        int teller = 0;		// shader to use for rendering
 	    Shader postproc;						// shader to use for post processing
         SceneGraph scene;
 
         RenderTarget target;					// intermediate render target
 	    ScreenQuad quad;						// screen filling quad for post processing
 	    bool useRenderTarget = true;
-        private Vector3 cam_pos;
-        private float cam_x , cam_z = -90;
         private  KeyboardState oldKeyboardState = OpenTK.Input.Keyboard.GetState();
 
         // initialize
         public void Init()
 	    {
-            Console.WriteLine("Press Left-Shift and Left-Control simultaneously to reset view");
+            Console.WriteLine("Press Left-Shift to reset view");
+            Console.WriteLine("Press right shift to reset speed");
+            Console.WriteLine("Press Escape to add an model.");
             scene = new SceneGraph();
 		    // initialize stopwatch
 		    timer = new Stopwatch();
@@ -60,32 +61,73 @@ namespace Template_P3 {
             float frameDuration = timer.ElapsedMilliseconds;
             timer.Reset();
             timer.Start();
-            Vector3 direction = new Vector3((float)Math.Sin(cam_x   ) * (float)Math.Sin(cam_z  ), (float)Math.Cos(cam_z  ), (float)Math.Cos(cam_x ) * (float)Math.Sin(cam_z ));
-
             if (keyState[Key.Left])
-                cam_x -= 0.1f;
-            if (keyState[Key.Right])
-                cam_x += 0.1f;
+                // a += 0.001f * frameDuration;
+                scene.view *= Matrix4.CreateRotationY(-.1f * speed);
+            if(keyState[Key.Right])
+                // a -= 0.001f * frameDuration;
+                scene.view *= Matrix4.CreateRotationY(.1f * speed);
             if (keyState[Key.Up])
-                cam_z -= 0.1f;
+                // b += 0.001f * frameDuration;
+                scene.view *= Matrix4.CreateRotationX(-.1f * speed);
             if (keyState[Key.Down])
-                cam_z += 0.1f;
-            /*if (keyState[Key.Z])
-                cam_dir.Z -= 0.1f;
+                // b -= 0.001f * frameDuration;
+                scene.view *= Matrix4.CreateRotationX(.1f * speed);
+            if (keyState[Key.Z])
+                // c += 0.001f * frameDuration;
+                scene.view *= Matrix4.CreateRotationZ(-.1f * speed);
             if (keyState[Key.X])
-                cam_dir.Z += 0.1f;*/
-            if (keyState[Key.W])
-                cam_pos -= new Vector3(-direction.X, 0, direction.Z);
-            if (keyState[Key.S])
-                cam_pos += new Vector3(-direction.X, 0, direction.Z);
-            if (keyState[Key.A])
-                cam_pos -= new Vector3(direction.Z, 0, direction.X);
-            if (keyState[Key.D])
-                cam_pos += new Vector3(direction.Z, 0, direction.X);
+                // c -= 0.001f * frameDuration;
+                scene.view *= Matrix4.CreateRotationZ(.1f * speed);
 
-            if (keyState[Key.ControlLeft] && keyState[Key.ShiftLeft])
+            if (keyState[Key.W])
+                // z += 0.001f * frameDuration;
+                scene.view *= Matrix4.CreateTranslation(0,0,1 * speed);
+            if (keyState[Key.A])
+                //x += 0.001f * frameDuration;
+                scene.view *= Matrix4.CreateTranslation(1 * speed, 0, 0);
+            if (keyState[Key.S])
+                // z -= 0.001f * frameDuration;
+                scene.view *= Matrix4.CreateTranslation(0, 0, -1 * speed);
+            if (keyState[Key.D])
+                //x -= 0.001f * frameDuration;
+                scene.view *= Matrix4.CreateTranslation(-1 * speed, 0, 0);
+            if (keyState[Key.Q] && !pressed)
+            { speed /= 2; teller = 0; pressed = true; }
+            if (keyState[Key.E] && !pressed)
+            { speed *= 2; teller = 0; pressed = true; }
+            if (speed < 0)
+                speed = 0;
+            if (keyState[Key.ShiftLeft])
                 scene.view = Matrix4.Identity;
-          
+            if (keyState[Key.ControlLeft])
+                speed = 1;
+            if (keyState[Key.Escape])
+            {
+                teller = 0; pressed = true;
+                Console.WriteLine("Please enter in the Location of obj file. Example: C:\\Users\\Documents\\mesh.obj");
+                string loc = Console.ReadLine();
+                Console.WriteLine("Please enter the location of the texture file.Example: C:\\Users\\Documents\\mesh.jpg. if none please enter Null. This is not yet implemented");
+                string tex = Console.ReadLine();
+                Console.WriteLine("please enter the coordinates in the following configuration (all integers) X -coordinate Y-coordinate Z-coordinate");
+                try
+                {
+                    string[] arr = Console.ReadLine().Split(' ');
+                    int tx = int.Parse(arr[0]), ty = int.Parse(arr[1]), tz = int.Parse(arr[2]);
+                    if (string.IsNullOrEmpty(tex))
+                        scene.lijst.Add(new Mesh(loc, Matrix4.CreateTranslation(tx, ty, tz)));
+                    else
+                        scene.lijst.Add(new Mesh(loc, Matrix4.CreateTranslation(tx, ty, tz), new Texture(tex)));
+                    var keyboard = OpenTK.Input.Keyboard.GetState();
+                    Control(keyboard);
+                }
+                catch(Exception e)
+                {
+                    Console.WriteLine("something went wrong please try again.");
+                    var keyboard = OpenTK.Input.Keyboard.GetState();
+                    Control(keyboard);
+                }
+            }
             oldKeyboardState = keyState;
         }
     
@@ -93,19 +135,16 @@ namespace Template_P3 {
 	    // tick for OpenGL rendering code
 	    public void RenderGL()
 	    {
-	        // measure frame duration
-            scene.view = Matrix4.Identity;
-	        scene.view *= Matrix4.CreateTranslation(cam_pos);
-            scene.view *= Matrix4.CreateRotationY(cam_x);
-	        scene.view *= Matrix4.CreateRotationX(cam_z+90);
-
-
+            // measure frame duration
+            teller++;
+            if (teller > 30)
+                pressed = false;
 
             // prepare matrix for vertex shader
-            // Matrix4 transform = Matrix4.CreateFromAxisAngle(new Vector3(0, 1, 0), a); 
-            // transform *= Matrix4.CreateFromAxisAngle(new Vector3(1, 0, 0), b);
-            // transform *= Matrix4.CreateFromAxisAngle(new Vector3(0, 0, 1), c);
-            Matrix4 transform =Matrix4.CreateRotationY(a);
+           // Matrix4 transform = Matrix4.CreateFromAxisAngle(new Vector3(0, 1, 0), a); 
+           // transform *= Matrix4.CreateFromAxisAngle(new Vector3(1, 0, 0), b);
+	       // transform *= Matrix4.CreateFromAxisAngle(new Vector3(0, 0, 1), c);
+           Matrix4 transform =Matrix4.CreateRotationY(a);
             transform *= Matrix4.CreateRotationZ(c);
             transform *= Matrix4.CreateRotationX(b);
             transform *= Matrix4.CreateTranslation(x, y, z);
