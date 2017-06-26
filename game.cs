@@ -64,7 +64,7 @@ namespace Template_P3 {
             if (car)
             {
                 if (keyState[Key.D])
-                { scene.car.modelmatrix *= Matrix4.CreateRotationY(-0.01f); scene.rotation += .01f; }
+                { scene.car.modelmatrix *= Matrix4.CreateRotationY(-0.01f); }//scene.view *= Matrix4.CreateRotationY(0.01f); }
                 if (keyState[Key.W])
                     scene.car.modelmatrix *= Matrix4.CreateTranslation(0, 0, -1);
                 if (keyState[Key.S])
@@ -72,6 +72,15 @@ namespace Template_P3 {
 
                 if (keyState[Key.A])
                     scene.car.modelmatrix *= Matrix4.CreateRotationY(0.01f);
+                if (keyState[Key.Up])
+                    cam_pos -= new Vector3(-direction.X, 0, direction.Z) * speed;
+                if (keyState[Key.Down])
+                    cam_pos += new Vector3(-direction.X, 0, direction.Z) * speed;
+                if (keyState[Key.Left])
+                    cam_pos -= new Vector3(direction.Z, 0, direction.X) * speed;
+                if (keyState[Key.Right])
+                    cam_pos += new Vector3(direction.Z, 0, direction.X) * speed;
+                scene.update();
             }
             else
             {
@@ -145,8 +154,8 @@ namespace Template_P3 {
                 }
             }
             if (keyState[Key.P])
-                car = true;
-            oldKeyboardState = keyState;
+            { car = true;  }
+                oldKeyboardState = keyState;
         }
     
 
@@ -157,19 +166,12 @@ namespace Template_P3 {
             teller++;
             if (teller > 30)
                 pressed = false;
-            if (!car)
-            {
+           
                 scene.view = Matrix4.Identity;
                 scene.view *= Matrix4.CreateTranslation(cam_pos);
                 scene.view *= Matrix4.CreateRotationY(cam_x);
                 scene.view *= Matrix4.CreateRotationX(cam_z + 90);
-            }
-            else
-            {
-                scene.view = scene.car.modelmatrix;//* Matrix4.CreateTranslation(1.2f,-1f,1);
-                scene.view *= Matrix4.CreateRotationY(scene.rotation);
-                scene.update();
-            }
+
 
 	        
             // update rotation
