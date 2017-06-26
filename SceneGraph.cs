@@ -30,6 +30,7 @@ namespace Template_P3
             Texture frame = new Texture("../../assets/car/black.png");
             Texture metal = new Texture("../../assets/car/metal.jpg");
             Texture chair = new Texture("../../assets/car/chair.jpg");
+            Texture feuxl = new Texture("../../assets/car/feuxl.jpg");
             // load teapot
             Mesh car = new Mesh("../../assets/car/frame.obj", /*Matrix4.Identity*/ Matrix4.CreateRotationY(PI), frame);
             lijst.Add(new Mesh("../../assets/teapot.obj", Matrix4.CreateTranslation(-16,0,-15) , wood));
@@ -38,7 +39,7 @@ namespace Template_P3
             
             
 
-            lijst.Add(new Mesh("../../assets/car/back lights.obj", Matrix4.Identity, car, wood));
+            lijst.Add(new Mesh("../../assets/car/back lights.obj", Matrix4.Identity, car, feuxl));
             lijst.Add(new Mesh("../../assets/car/metal parts.obj", Matrix4.Identity, car, metal));
             lijst.Add(new Mesh("../../assets/car/seats.obj", Matrix4.Identity, car, chair));
             lijst.Add(new Mesh("../../assets/car/steering wheel.obj", Matrix4.Identity, car, wood));
