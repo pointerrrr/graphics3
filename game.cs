@@ -39,10 +39,7 @@ namespace Template_P3 {
 		    timer.Reset();
 		    timer.Start();
 		    // create shaders
-		    
 		    postproc = new Shader( "../../shaders/vs_post.glsl", "../../shaders/fs_post.glsl" );
-		    // load a texture
-
 		    // create the render target
 		    target = new RenderTarget( screen.width, screen.height );
 		    quad = new ScreenQuad();
