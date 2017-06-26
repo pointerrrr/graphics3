@@ -36,6 +36,8 @@ namespace Template_P3 {
             Console.WriteLine("Press Left-Shift to reset view");
             Console.WriteLine("Press right shift to reset speed");
             Console.WriteLine("Press Tab to add an model.");
+            Console.WriteLine("To control the car press P");
+            Console.WriteLine("To reset the car press R");
             scene = new SceneGraph();
 		    // initialize stopwatch
 		    timer = new Stopwatch();
@@ -63,15 +65,16 @@ namespace Template_P3 {
 
             if (car)
             {
-                if (keyState[Key.D])
+                if (keyState[Key.D] && (keyState[Key.W] || keyState[Key.S]))
                 { scene.car.modelmatrix *= Matrix4.CreateRotationY(-0.01f); }//scene.view *= Matrix4.CreateRotationY(0.01f); }
+                                if (keyState[Key.A] && (keyState[Key.W] || keyState[Key.S]))
+                    scene.car.modelmatrix *= Matrix4.CreateRotationY(0.01f);
                 if (keyState[Key.W])
                     scene.car.modelmatrix *= Matrix4.CreateTranslation(0, 0, -1);
                 if (keyState[Key.S])
                     scene.car.modelmatrix *= Matrix4.CreateTranslation(0, 0, 1);
 
-                if (keyState[Key.A])
-                    scene.car.modelmatrix *= Matrix4.CreateRotationY(0.01f);
+
                 if (keyState[Key.Up])
                     cam_pos -= new Vector3(-direction.X, 0, direction.Z) * speed;
                 if (keyState[Key.Down])
@@ -81,6 +84,7 @@ namespace Template_P3 {
                 if (keyState[Key.Right])
                     cam_pos += new Vector3(direction.Z, 0, direction.X) * speed;
                 scene.update();
+                
             }
             else
             {
@@ -155,10 +159,15 @@ namespace Template_P3 {
             }
             if (keyState[Key.P])
             { car = true;  }
+            if (keyState[Key.R])
+                scene.car.modelmatrix = Matrix4.CreateRotationY(scene.rotation);
                 oldKeyboardState = keyState;
         }
     
-
+        void cameraUpdate()
+        {
+            scene.view = scene.car.modelmatrix * Matrix4.CreateRotationY(scene.rotation);
+        }
 	    // tick for OpenGL rendering code
 	    public void RenderGL()
 	    {
@@ -171,7 +180,8 @@ namespace Template_P3 {
                 scene.view *= Matrix4.CreateTranslation(cam_pos);
                 scene.view *= Matrix4.CreateRotationY(cam_x);
                 scene.view *= Matrix4.CreateRotationX(cam_z + 90);
-
+            
+        
 
 	        
             // update rotation
@@ -183,7 +193,7 @@ namespace Template_P3 {
 			    // enable render target
 			    target.Bind();
 
-                scene.render();
+                scene.render(car);
 
 			    // render quad
 			    target.Unbind();
@@ -192,7 +202,7 @@ namespace Template_P3 {
 		    else
 		    {
                 // render scene directly to the screen
-                scene.render();
+                scene.render(car);
 		    }
 	    }
     }

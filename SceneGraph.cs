@@ -17,7 +17,7 @@ namespace Template_P3
         Texture wood;                           // texture to use for rendering
         public List<Mesh> lijst = new List<Mesh>();
         const float PI = 3.1415926535f;
-        public float rotation =  0;
+        public float rotation =  PI;
         public Matrix4 view, projection;
         
 
@@ -59,13 +59,16 @@ namespace Template_P3
 
         }
 
-        public void render ()
+        public void render (bool car)
         {
             foreach(Mesh mesh in lijst)
             {
                // mesh.modelmatrix = view * mesh.modelmatrix;
                 mesh.transform = mesh.modelmatrix * view;
-                mesh.MV = mesh.modelmatrix;
+                if (!car)
+                    mesh.MV = mesh.modelmatrix;
+                else
+                    mesh.MV = mesh.transform;
                 mesh.transform *= projection;
                 mesh.Render(shader);
             }
