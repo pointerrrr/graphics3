@@ -11,7 +11,7 @@ namespace Template_P3 {
     {
         // data members
         public Mesh parent;
-        public Matrix4 modelmatrix, transform, MV;
+        public Matrix4 modelmatrix, transform, MV, origin;
         Texture texture;
         const float PI = 3.1415926535f;
         public Matrix4 location;
@@ -38,8 +38,14 @@ namespace Template_P3 {
         loader.Load(this, fileName);
             texture = text;
         this.parent = parent;
+        this.origin = model;
         modelmatrix = parent.modelmatrix * model;
     }
+        public void update()
+        {
+            if (this.parent != null)
+                modelmatrix = parent.modelmatrix * origin;
+        }
 
 	    // initialization; called during first render
 	    public void Prepare( Shader shader )

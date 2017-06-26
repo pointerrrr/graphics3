@@ -15,7 +15,7 @@ namespace Template_P3 {
 	    // member variables
 	    public Surface screen;					// background surface for printing etc.
         float speed = 1;
-        public bool pressed;
+        public bool pressed, car;
 	    const float PI = 3.1415926535f;			// PI
         private float a = PI/2f, b = 0, c = 0, x =0, y =0, z =0;		// teapot rotation angle
 	    Stopwatch timer;                        // timer for measuring frame duration
@@ -61,35 +61,51 @@ namespace Template_P3 {
             timer.Start();
             Vector3 direction = new Vector3((float)Math.Sin(cam_x) * (float)Math.Sin(cam_z), (float)Math.Cos(cam_z), (float)Math.Cos(cam_x) * (float)Math.Sin(cam_z));
 
-            if (keyState[Key.Left])
-                cam_x -= 0.1f;
-            if (keyState[Key.Right])
-                cam_x += 0.1f;
-            if (keyState[Key.Up])
-                cam_z -= 0.1f;
-            if (keyState[Key.Down])
-                cam_z += 0.1f;
-            /*if (keyState[Key.Z])
-                cam_dir.Z -= 0.1f;
-            if (keyState[Key.X])
-                cam_dir.Z += 0.1f;*/
-            if (keyState[Key.W])
-                cam_pos -= new Vector3(-direction.X, 0, direction.Z) * speed;
-            if (keyState[Key.S])
-                cam_pos += new Vector3(-direction.X, 0, direction.Z) * speed;
-            if (keyState[Key.A])
-                cam_pos -= new Vector3(direction.Z, 0, direction.X) * speed;
-            if (keyState[Key.D])
-                cam_pos += new Vector3(direction.Z, 0, direction.X) * speed;
-            if (keyState[Key.Q])
-                cam_pos -= new Vector3(0, 1, 0) * speed;
-            if (keyState[Key.E])
-                cam_pos += new Vector3(0, 1, 0) * speed;
+            if (car)
+            {
+                if (keyState[Key.D])
+                { scene.car.modelmatrix *= Matrix4.CreateRotationY(-0.01f); scene.rotation += .01f; }
+                if (keyState[Key.W])
+                    scene.car.modelmatrix *= Matrix4.CreateTranslation(0, 0, -1);
+                if (keyState[Key.S])
+                    scene.car.modelmatrix *= Matrix4.CreateTranslation(0, 0, 1);
+
+                if (keyState[Key.A])
+                    scene.car.modelmatrix *= Matrix4.CreateRotationY(0.01f);
+            }
+            else
+            {
+                if (keyState[Key.Left])
+                    cam_x -= 0.1f;
+                if (keyState[Key.Right])
+                    cam_x += 0.1f;
+                if (keyState[Key.Up])
+                    cam_z -= 0.1f;
+                if (keyState[Key.Down])
+                    cam_z += 0.1f;
+                /*if (keyState[Key.Z])
+                    cam_dir.Z -= 0.1f;
+                if (keyState[Key.X])
+                    cam_dir.Z += 0.1f;*/
+                if (keyState[Key.W])
+                    cam_pos -= new Vector3(-direction.X, 0, direction.Z) * speed;
+                if (keyState[Key.S])
+                    cam_pos += new Vector3(-direction.X, 0, direction.Z) * speed;
+                if (keyState[Key.A])
+                    cam_pos -= new Vector3(direction.Z, 0, direction.X) * speed;
+                if (keyState[Key.D])
+                    cam_pos += new Vector3(direction.Z, 0, direction.X) * speed;
+                if (keyState[Key.Q])
+                    cam_pos -= new Vector3(0, 1, 0) * speed;
+                if (keyState[Key.E])
+                    cam_pos += new Vector3(0, 1, 0) * speed;
+            }
             if (keyState[Key.ShiftLeft])
             {
                 cam_x = 0;
                 cam_z = -90;
                 cam_pos = new Vector3(0,0,0);
+                car = false;
             }
           
                 //x -= 0.001f * frameDuration;
@@ -128,6 +144,8 @@ namespace Template_P3 {
                     Control(keyboard);
                 }
             }
+            if (keyState[Key.P])
+                car = true;
             oldKeyboardState = keyState;
         }
     
@@ -139,14 +157,19 @@ namespace Template_P3 {
             teller++;
             if (teller > 30)
                 pressed = false;
-	        scene.view = Matrix4.Identity;
-	        scene.view *= Matrix4.CreateTranslation(cam_pos);
-	        scene.view *= Matrix4.CreateRotationY(cam_x);
-	        scene.view *= Matrix4.CreateRotationX(cam_z + 90);
-            Matrix4 transform =Matrix4.CreateRotationY(a);
-            transform *= Matrix4.CreateRotationZ(c);
-            transform *= Matrix4.CreateRotationX(b);
-            transform *= Matrix4.CreateTranslation(x, y, z);
+            if (!car)
+            {
+                scene.view = Matrix4.Identity;
+                scene.view *= Matrix4.CreateTranslation(cam_pos);
+                scene.view *= Matrix4.CreateRotationY(cam_x);
+                scene.view *= Matrix4.CreateRotationX(cam_z + 90);
+            }
+            else
+            {
+                scene.view = scene.car.modelmatrix;//* Matrix4.CreateTranslation(1.2f,-1f,1);
+                scene.view *= Matrix4.CreateRotationY(scene.rotation);
+                scene.update();
+            }
 
 	        
             // update rotation
@@ -158,7 +181,7 @@ namespace Template_P3 {
 			    // enable render target
 			    target.Bind();
 
-                scene.render(transform);
+                scene.render();
 
 			    // render quad
 			    target.Unbind();
@@ -167,7 +190,7 @@ namespace Template_P3 {
 		    else
 		    {
                 // render scene directly to the screen
-                scene.render(transform);
+                scene.render();
 		    }
 	    }
     }

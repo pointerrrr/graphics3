@@ -13,11 +13,11 @@ namespace Template_P3
     class SceneGraph
     {
         Shader shader;
-        Mesh mesh, floor;						// a mesh to draw using OpenGL
+        public Mesh car;						// a mesh to draw using OpenGL
         Texture wood;                           // texture to use for rendering
         public List<Mesh> lijst = new List<Mesh>();
         const float PI = 3.1415926535f;
-        float rotation = PI;
+        public float rotation = 0;
         public Matrix4 view, projection;
         
 
@@ -33,7 +33,7 @@ namespace Template_P3
             Texture chair = new Texture("../../assets/car/chair.jpg");
             Texture feuxl = new Texture("../../assets/car/feuxl.jpg");
             // load teapot
-            Mesh car = new Mesh("../../assets/car/frame.obj", Matrix4.CreateRotationY(rotation), frame);
+            car = new Mesh("../../assets/car/frame.obj", Matrix4.CreateRotationY(rotation), frame);
             lijst.Add(new Mesh("../../assets/teapot.obj", Matrix4.CreateTranslation(-16,0,-15) , wood));
             lijst.Add(new Mesh("../../assets/teapot.obj", Matrix4.CreateTranslation(16,0,0), lijst[0], wood));
             lijst.Add(car);
@@ -59,7 +59,7 @@ namespace Template_P3
 
         }
 
-        public void render (Matrix4 camera)
+        public void render ()
         {
             foreach(Mesh mesh in lijst)
             {
@@ -74,6 +74,14 @@ namespace Template_P3
            // camera *= Matrix4.CreatePerspectiveFieldOfView(1.2f, 1.3f, .1f, 1000);
             //mesh.Render(shader, camera, MV, wood);
 
+        }
+
+        public void update()
+        {
+            foreach(Mesh mesh in lijst)
+            {
+                mesh.update();
+            }
         }
 
     }
