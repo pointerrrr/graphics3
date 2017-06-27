@@ -21,6 +21,8 @@ namespace Template_P3 {
 	    int vertexBufferId;						// vertex buffer
 	    int triangleBufferId;					// triangle buffer
 	    int quadBufferId;						// quad buffer
+        public Matrix4 rotation;
+        bool tire;
 
 	// constructor
 	public Mesh( string fileName,Matrix4 model, Texture text = null )
@@ -28,10 +30,12 @@ namespace Template_P3 {
 		MeshLoader loader = new MeshLoader();
 		loader.Load( this, fileName );
             texture = text;
+            origin = model;
             modelmatrix = model;
 
 	    }
 
+    //constructor overload if the mesh has a parent
     public Mesh(string fileName, Matrix4 model, Mesh parent, Texture text = null)
     {
         MeshLoader loader = new MeshLoader();
@@ -41,12 +45,30 @@ namespace Template_P3 {
         origin = model;
         modelmatrix =  model * parent.modelmatrix;
     }
+        // constructor specifically for the tires of the car
+        public Mesh(string fileName, Matrix4 model, Mesh parent, float x, float y, float z, Texture text = null)
+        {
+            MeshLoader loader = new MeshLoader();
+            loader.Load(this, fileName);
+            this.parent = parent;
+            texture = text;
+            rotation = model;
+            origin = Matrix4.CreateTranslation(x,y,z);
+            modelmatrix = rotation * origin * parent.modelmatrix;
+            tire = true;
+        }
+
+        //update of the modelmatrix if the car moves. With check if the mesh is a tire
         public void update()
         {
-            if (this.parent != null)
+            if (this.parent != null && !tire)
             {
                 modelmatrix = origin * parent.modelmatrix;
                 
+            }
+            else if (this.parent != null && tire)
+            {
+                modelmatrix = rotation * origin * parent.modelmatrix;
             }
            
         }
@@ -75,76 +97,63 @@ namespace Template_P3 {
 	// render the mesh using the supplied shader and matrix
 	public void Render( Shader shader )
 	{
-            //Matrix4 loc = transform * Matrix4.CreateTranslation(x, y, z);
-            //if (parent != null)
-            //    loc *= Matrix4.CreateTranslation(parent.x, parent.y, parent.z);
-            //Matrix4 MV = loc;
-            //loc *= Matrix4.CreatePerspectiveFieldOfView(1.2f, 1.3f, .1f, 1000);
+        // on first run, prepare buffers
+        Prepare( shader );
 
-            //meshTree[i].transform = meshTree[i].modelMatrix * viewMatrix * projectionMatrix;
+        //Check if the mesh has a texture and Load this if its available
+        if (texture != null)
+        {
+            int texLoc = GL.GetUniformLocation(shader.programID, "pixels");
+            GL.Uniform1(texLoc, 0);
+            GL.ActiveTexture(TextureUnit.Texture0);
+            GL.BindTexture(TextureTarget.Texture2D, texture.id);
+        }   
 
-            
+		// enable shader
+		GL.UseProgram( shader.programID );
 
-                // on first run, prepare buffers
-                Prepare( shader );
+        Vector3 position = new Vector3(0, 10, 0);
+        Vector3 intensity = new Vector3(1000, 1000, 1000);
+        Vector4 ambient = new Vector4(1,1,1,1);
 
-            // enable texture
-            if (texture != null)
-            {
-                int texLoc = GL.GetUniformLocation(shader.programID, "pixels");
-                GL.Uniform1(texLoc, 0);
-                GL.ActiveTexture(TextureUnit.Texture0);
-                GL.BindTexture(TextureTarget.Texture2D, texture.id);
-            }
+	    GL.Uniform3(shader.uniform_lightintensity, ref intensity);
+	    GL.Uniform3(shader.uniform_lightposition, ref position);
+        GL.Uniform4(shader.uniform_ambient, ref ambient);
+                       
 
-            
+        // pass transform to vertex shader
+        GL.UniformMatrix4( shader.uniform_mview, false, ref transform );
+        GL.UniformMatrix4( shader.uniform_mv, false, ref MV);
 
-		    // enable shader
-		    GL.UseProgram( shader.programID );
+        // bind interleaved vertex data
+		GL.EnableClientState( ArrayCap.VertexArray );
+		GL.BindBuffer( BufferTarget.ArrayBuffer, vertexBufferId );
+		GL.InterleavedArrays( InterleavedArrayFormat.T2fN3fV3f, Marshal.SizeOf( typeof( ObjVertex ) ), IntPtr.Zero );
 
-            Vector3 position = new Vector3(0, 10, 0);
-            Vector3 intensity = new Vector3(1000, 1000, 1000);
-            Vector4 ambient = new Vector4(1,1,1,1);
+        // link vertex attributes to shader parameters 
+		GL.VertexAttribPointer( shader.attribute_vuvs, 2, VertexAttribPointerType.Float, false, 32, 0 );
+		GL.VertexAttribPointer( shader.attribute_vnrm, 3, VertexAttribPointerType.Float, true, 32, 2 * 4 );
+		GL.VertexAttribPointer( shader.attribute_vpos, 3, VertexAttribPointerType.Float, false, 32, 5 * 4 );
 
-	        GL.Uniform3(shader.uniform_lightintensity, ref intensity);
-	        GL.Uniform3(shader.uniform_lightposition, ref position);
-            GL.Uniform4(shader.uniform_ambient, ref ambient);
+        // enable position, normal and uv attributes
+        GL.EnableVertexAttribArray( shader.attribute_vpos );
+        GL.EnableVertexAttribArray( shader.attribute_vnrm );
+        GL.EnableVertexAttribArray( shader.attribute_vuvs );
 
-            
+		// bind triangle index data and render
+		GL.BindBuffer( BufferTarget.ElementArrayBuffer, triangleBufferId );
+		GL.DrawArrays( PrimitiveType.Triangles, 0, triangles.Length * 3 );
 
-            // pass transform to vertex shader
-            GL.UniformMatrix4( shader.uniform_mview, false, ref transform );
-            GL.UniformMatrix4( shader.uniform_mv, false, ref MV);
-
-		    // bind interleaved vertex data
-		    GL.EnableClientState( ArrayCap.VertexArray );
-		    GL.BindBuffer( BufferTarget.ArrayBuffer, vertexBufferId );
-		    GL.InterleavedArrays( InterleavedArrayFormat.T2fN3fV3f, Marshal.SizeOf( typeof( ObjVertex ) ), IntPtr.Zero );
-
-		    // link vertex attributes to shader parameters 
-		    GL.VertexAttribPointer( shader.attribute_vuvs, 2, VertexAttribPointerType.Float, false, 32, 0 );
-		    GL.VertexAttribPointer( shader.attribute_vnrm, 3, VertexAttribPointerType.Float, true, 32, 2 * 4 );
-		    GL.VertexAttribPointer( shader.attribute_vpos, 3, VertexAttribPointerType.Float, false, 32, 5 * 4 );
-
-            // enable position, normal and uv attributes
-            GL.EnableVertexAttribArray( shader.attribute_vpos );
-            GL.EnableVertexAttribArray( shader.attribute_vnrm );
-            GL.EnableVertexAttribArray( shader.attribute_vuvs );
-
-		    // bind triangle index data and render
-		    GL.BindBuffer( BufferTarget.ElementArrayBuffer, triangleBufferId );
-		    GL.DrawArrays( PrimitiveType.Triangles, 0, triangles.Length * 3 );
-
-		    // bind quad index data and render
-		    if (quads.Length > 0)
+		// bind quad index data and render
+		if (quads.Length > 0)
 		    {
-			    GL.BindBuffer( BufferTarget.ElementArrayBuffer, quadBufferId );
+		        GL.BindBuffer( BufferTarget.ElementArrayBuffer, quadBufferId );
 			    GL.DrawArrays( PrimitiveType.Quads, 0, quads.Length * 4 );
 		    }
 
-		    // restore previous OpenGL state
-		    GL.UseProgram( 0 );
-	    }
+		// restore previous OpenGL state
+		GL.UseProgram( 0 );
+	}
 
        
 
