@@ -158,7 +158,7 @@ namespace Template_P3 {
                 }
             }
             if (keyState[Key.P])
-            { car = true;  }
+            { car = !car;  }
             if (keyState[Key.R])
                 scene.car.modelmatrix = Matrix4.CreateRotationY(scene.rotation);
                 oldKeyboardState = keyState;

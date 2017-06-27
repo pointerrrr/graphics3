@@ -63,12 +63,8 @@ namespace Template_P3
         {
             foreach(Mesh mesh in lijst)
             {
-               // mesh.modelmatrix = view * mesh.modelmatrix;
-                mesh.transform = mesh.modelmatrix * view;
-                if (!car)
-                    mesh.MV = mesh.modelmatrix;
-                else
-                    mesh.MV = mesh.transform;
+               mesh.transform = mesh.modelmatrix * view;
+                mesh.MV = mesh.transform;
                 mesh.transform *= projection;
                 mesh.Render(shader);
             }
