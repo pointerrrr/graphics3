@@ -37,7 +37,7 @@ void main()
 	vec3 modelViewVertex = vec3(MV * vec4( vPosition, 1.0 )); 
 	vec3 modelViewNormal = vec3(MV * vec4( vNormal, 0.0));
 	// the lights
-	Light lights[6] = Light[6](Light(light1), Light(light2), Light(light3), Light(light4),Light(light5),Light(light6));
+	Light lights[6] = Light[6](light1, light2, light3, light4, light5, light6);
 	diffuse = vec3(0,0,0);
 	specular = vec3(0,0,0);
 	// calculate the total light value and pass them to the fragment shader
