@@ -40,33 +40,28 @@ namespace Template_P3
             Texture metal = new Texture("../../assets/car/metal.jpg");
             Texture chair = new Texture("../../assets/car/chair.jpg");
             Texture feuxl = new Texture("../../assets/car/feuxl.jpg");
+            Texture skybox = new Texture("../../assets/wall.jpg");
             // load teapot
-            car = new Mesh("../../assets/car/frame.obj", Matrix4.CreateRotationY(PI), frame);
+            
             lijst.Add(new Mesh("../../assets/teapot.obj", Matrix4.CreateTranslation(-16,0,-15) , wood, 100f, 0.5f));
             lijst.Add(new Mesh("../../assets/teapot.obj", Matrix4.CreateTranslation(16,0,0), lijst[0], wood, 100f, 0.7f));
-            
-            lijst.Add(new Mesh("../../assets/box.obj",  Matrix4.CreateTranslation(-5, -3, -17), wood, 1000f, 0.9f));
-
+            lijst.Add(new Mesh("../../assets/box.obj",  Matrix4.CreateTranslation(-5, -3, -17), skybox, 1000f, 0.9f));
+            car = new Mesh("../../assets/car/frame.obj", Matrix4.CreateRotationY(PI), frame, 100f, 0.5f);
             lijst.Add(car);
             lijst.Add(new Mesh("../../assets/car/back lights.obj", Matrix4.Identity, car, feuxl));
-            
-            lijst.Add(new Mesh("../../assets/car/metal parts.obj", Matrix4.Identity, car, metal));
+            lijst.Add(new Mesh("../../assets/car/metal parts.obj", Matrix4.Identity, car, metal, 100f, 0.25f));
             lijst.Add(new Mesh("../../assets/car/seats.obj", Matrix4.Identity, car, chair));
             lijst.Add(new Mesh("../../assets/car/steering wheel.obj", Matrix4.Identity, car, wood));
-
             wheels[0] = new Mesh("../../assets/car/test.obj", Matrix4.CreateRotationX(rotation) * Matrix4.CreateTranslation(-2.6f, -1.8f, -4f), car, tire);
             wheels[1] = new Mesh("../../assets/car/test.obj", Matrix4.CreateRotationX(rotation) * Matrix4.CreateTranslation(-2.6f, -1.8f, 4.6f), car, tire);
             wheels[2] = new Mesh("../../assets/car/rechts.obj", Matrix4.CreateRotationX(rotation) * Matrix4.CreateTranslation(2.6f, -1.8f, 4.6f), car, tire);
             wheels[3] = new Mesh("../../assets/car/rechts.obj", Matrix4.CreateRotationX(rotation) * Matrix4.CreateTranslation(2.6f, -1.8f, -4f), car, tire);
             //rechts achter
             lijst.Add(wheels[0]);
-
             //rechts voor
             lijst.Add(wheels[1]);
-
             //links voor
             lijst.Add(wheels[2]);
-
             //links achter
             lijst.Add(wheels[3]);
 
