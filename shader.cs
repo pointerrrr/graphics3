@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
 namespace Template_P3 {
@@ -19,8 +18,7 @@ namespace Template_P3 {
         public int uniform_lightposition1, uniform_lightposition2, uniform_lightposition3, uniform_lightposition4, uniform_lightposition5, uniform_lightposition6;
         public int uniform_lightintensity1, uniform_lightintensity2, uniform_lightintensity3, uniform_lightintensity4, uniform_lightintensity5, uniform_lightintensity6;
         public int uniform_ambient;
-
-
+        
         // constructor
         public Shader( String vertexShader, String fragmentShader )
 	    {
@@ -30,8 +28,7 @@ namespace Template_P3 {
 		    Load( fragmentShader, ShaderType.FragmentShader, programID, out fsID );
 		    GL.LinkProgram( programID );
 		    Console.WriteLine( GL.GetProgramInfoLog( programID ) );
-
-		    // get locations of shader parameters
+            // get locations of shader parameters
 		    attribute_vpos = GL.GetAttribLocation( programID, "vPosition" );
 		    attribute_vnrm = GL.GetAttribLocation( programID, "vNormal" );
 		    attribute_vuvs = GL.GetAttribLocation( programID, "vUV" );
@@ -52,7 +49,7 @@ namespace Template_P3 {
 	        uniform_lightintensity5 = GL.GetUniformLocation(programID, "light5.intensity");
 	        uniform_lightposition6 = GL.GetUniformLocation(programID, "light6.position");
 	        uniform_lightintensity6 = GL.GetUniformLocation(programID, "light6.intensity");
-        }
+        } // Shader
 
 	    // loading shaders
 	    void Load( String filename, ShaderType type, int program, out int ID )
@@ -63,7 +60,7 @@ namespace Template_P3 {
 		    GL.CompileShader( ID );
 		    GL.AttachShader( program, ID );
 		    Console.WriteLine( GL.GetShaderInfoLog( ID ) );
-	    }
+	    } // Load
     }
 
 } // namespace Template_P3

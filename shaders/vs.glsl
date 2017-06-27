@@ -33,16 +33,17 @@ uniform Light light6;
 // vertex shader
 void main()
 {
+	// vertex positions after transform
 	vec3 modelViewVertex = vec3(MV * vec4( vPosition, 1.0 )); 
 	vec3 modelViewNormal = vec3(MV * vec4( vNormal, 0.0));
-	
-	Light asdf[6] = Light[6](Light(light1), Light(light2), Light(light3), Light(light4),Light(light5),Light(light6));
-	
+	// the lights
+	Light lights[6] = Light[6](Light(light1), Light(light2), Light(light3), Light(light4),Light(light5),Light(light6));
 	diffuse = vec3(0,0,0);
 	specular = vec3(0,0,0);
+	// calculate the total light value and pass them to the fragment shader
 	for(int i = 0; i < 6;i++)
 	{
-		vec3 LightPos = vec3(asdf[i].position * vec4(0,0,0,1));
+		vec3 LightPos = vec3(lights[i].position * vec4(0,0,0,1));
 		float distance = length(LightPos - modelViewVertex);
 		vec3 lightVector = normalize(LightPos - modelViewVertex);
 		float diffusetemp = max(dot(modelViewNormal, lightVector), 0.1);
@@ -50,15 +51,12 @@ void main()
 		vec3 H = normalize(V + lightVector);
 		float specDot = dot(modelViewNormal, H);	
 		float attenuation = 1 / (distance * distance);	
-		specular = specular + pow(max(0, specDot),spec + 1) * attenuation * (1 - diffPerc) * asdf[i].intensity;
-		diffuse = diffuse + diffusetemp * attenuation * diffPerc * asdf[i].intensity;		
+		specular = specular + pow(max(0, specDot),spec + 1) * attenuation * (1 - diffPerc) * lights[i].intensity;
+		diffuse = diffuse + diffusetemp * attenuation * diffPerc * lights[i].intensity;		
 	}
-	
-	
 	// transform vertex using supplied matrix
 	gl_Position = transform * vec4(vPosition, 1.0);
 	// forward normal and uv coordinate; will be interpolated over triangle
-	normal = transform * vec4( vNormal, 0.0f );
 	uv = vUV;
 }
 

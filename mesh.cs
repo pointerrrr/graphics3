@@ -11,52 +11,60 @@ namespace Template_P3 {
     public class Mesh
     {
         // data members
-        public Mesh parent;
-        public Matrix4 modelmatrix, transform, MV, origin; 
-        Texture texture;
-		public float spec = 100;
-		public float diffPerc = 0.5f;
         const float PI = 3.1415926535f;
-        public Matrix4 location;
+
+        public Mesh parent;                     // parent mesh, for relative positioning
+        public Matrix4 modelmatrix, transform, MV, origin, location; // matrices, used in the shader and scenegraph
+        public float spec = 100;                // specularity
+		public float diffPerc = 0.5f;           // diffuse percentage
 	    public ObjVertex[] vertices;			// vertex positions, model space
 	    public ObjTriangle[] triangles;			// triangles (3 vertex indices)
 	    public ObjQuad[] quads;					// quads (4 vertex indices)
-	    int vertexBufferId;						// vertex buffer
-	    int triangleBufferId;					// triangle buffer
-	    int quadBufferId;						// quad buffer
 
-		// constructor
-		public Mesh( string fileName,Matrix4 model, Texture text = null, float specularity = 0, float diffusePerc = 1)
+	    private int vertexBufferId;				// vertex buffer
+	    private int triangleBufferId;			// triangle buffer
+	    private int quadBufferId;			    // quad buffer
+        private Texture texture;                // texure for this mesh
+
+        // constructor for mesh without parent
+        public Mesh( string fileName,Matrix4 model, Texture text = null, float specularity = 0, float diffusePerc = 1)
 		{
 			MeshLoader loader = new MeshLoader();
 			loader.Load( this, fileName );
-			texture = text;
+		    if (text == null)
+		        texture = new Texture("../../assets/white.png");
+            else
+			    texture = text;
 			modelmatrix = model;
 			spec = specularity;
 			diffPerc = diffusePerc;
-		}
+		} // Mesh
 
+        // constructor for mesh with parent
 		public Mesh(string fileName, Matrix4 model, Mesh parent, Texture text = null, float specularity = 0, float diffusePerc = 1)
 		{
 			MeshLoader loader = new MeshLoader();
 			loader.Load(this, fileName);
-				texture = text;
-			this.parent = parent;
+		    if (text == null)
+		        texture = new Texture("../../assets/white.png");
+		    else
+		        texture = text;
+            this.parent = parent;
 			spec = specularity;
 			diffPerc = diffusePerc;
 			origin = model;
+            // multiply by parent matrix for relative position
 			modelmatrix =  model * parent.modelmatrix;
-		}
+		} // Mesh
 
+        // update the matrix relative to its original, to make sure everything stays in order
         public void update()
         {
-            if (this.parent != null)
+            if (parent != null)
             {
                 modelmatrix = origin * parent.modelmatrix;
-                
             }
-           
-        }
+        } // update
 
 	    // initialization; called during first render
 	    public void Prepare( Shader shader )
@@ -77,9 +85,9 @@ namespace Template_P3 {
 		    GL.GenBuffers( 1, out quadBufferId );
 		    GL.BindBuffer( BufferTarget.ElementArrayBuffer, quadBufferId );
 		    GL.BufferData( BufferTarget.ElementArrayBuffer, (IntPtr)(quads.Length * Marshal.SizeOf( typeof( ObjQuad ) )), quads, BufferUsageHint.StaticDraw );
-	    }
+	    } // Prepare
 
-	// render the mesh using the supplied shader and matrix
+	    // render the mesh using the supplied shader and matrix
 	    public void Render( Shader shader, Matrix4 view )
 	    {
             // on first run, prepare buffers
@@ -93,12 +101,12 @@ namespace Template_P3 {
                 GL.ActiveTexture(TextureUnit.Texture0);
                 GL.BindTexture(TextureTarget.Texture2D, texture.id);
             }
+
 		    // enable shader
 		    GL.UseProgram( shader.programID );
 	        List<Light> lights = SceneGraph.lights;
             // set light variables
 	        Vector4 ambient = new Vector4(0.1f, 0.1f, 0.1f, 0);
-
             Matrix4 position1 = lights[0].position * lights[0].parentmatrix * view;
 	        Matrix4 position2 = lights[1].position * lights[1].parentmatrix * view;
 	        Matrix4 position3 = lights[2].position * lights[2].parentmatrix * view;
@@ -120,7 +128,6 @@ namespace Template_P3 {
 	        GL.Uniform3(shader.uniform_lightintensity5, ref intensity5);
 	        GL.Uniform3(shader.uniform_lightintensity6, ref intensity6);
             GL.Uniform4(shader.uniform_ambient, ref ambient);
-
             GL.UniformMatrix4(shader.uniform_lightposition1, false, ref position1);
 	        GL.UniformMatrix4(shader.uniform_lightposition2, false, ref position2);
 	        GL.UniformMatrix4(shader.uniform_lightposition3, false, ref position3);
@@ -162,7 +169,7 @@ namespace Template_P3 {
 
 		    // restore previous OpenGL state
 		    GL.UseProgram( 0 );
-	    }
+	    } // Render
 
        
 
@@ -188,10 +195,12 @@ namespace Template_P3 {
 
     }
 
-    public struct Light
+    // light source struct
+    public class Light
     {
         public Matrix4 position;
 
+        // return the matrix of the parent
         public Matrix4 parentmatrix
         {
             get
@@ -211,7 +220,7 @@ namespace Template_P3 {
             this.intensity = intensity;
             this.parent = parent;
             if (parent != null)
-            this.position *= parent.modelmatrix;
+                this.position *= parent.modelmatrix;
         }
     }
 } // namespace Template_P3
