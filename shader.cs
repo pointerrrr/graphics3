@@ -16,8 +16,8 @@ namespace Template_P3 {
 		public int attribute_diffPerc;
 	    public int uniform_mview;
         public int uniform_mv;
-        public int uniform_lightposition;
-        public int uniform_lightintensity;
+        public int uniform_lightposition1, uniform_lightposition2, uniform_lightposition3, uniform_lightposition4, uniform_lightposition5, uniform_lightposition6;
+        public int uniform_lightintensity1, uniform_lightintensity2, uniform_lightintensity3, uniform_lightintensity4, uniform_lightintensity5, uniform_lightintensity6;
         public int uniform_ambient;
 
 
@@ -39,8 +39,19 @@ namespace Template_P3 {
 			attribute_diffPerc = GL.GetAttribLocation( programID, "diffPerc");
 		    uniform_mview = GL.GetUniformLocation( programID, "transform" );
 	        uniform_mv = GL.GetUniformLocation(programID, "MV");
-	        uniform_lightposition = GL.GetUniformLocation(programID, "light.position");
-	        uniform_lightintensity = GL.GetUniformLocation(programID, "light.intensity");
+	        uniform_ambient = GL.GetUniformLocation(programID, "ambient");
+            uniform_lightposition1 = GL.GetUniformLocation(programID, "light1.position");
+	        uniform_lightintensity1 = GL.GetUniformLocation(programID, "light1.intensity");
+	        uniform_lightposition2 = GL.GetUniformLocation(programID, "light2.position");
+	        uniform_lightintensity2 = GL.GetUniformLocation(programID, "light2.intensity");
+	        uniform_lightposition3 = GL.GetUniformLocation(programID, "light3.position");
+	        uniform_lightintensity3 = GL.GetUniformLocation(programID, "light3.intensity");
+	        uniform_lightposition4 = GL.GetUniformLocation(programID, "light4.position");
+	        uniform_lightintensity4 = GL.GetUniformLocation(programID, "light4.intensity");
+	        uniform_lightposition5 = GL.GetUniformLocation(programID, "light5.position");
+	        uniform_lightintensity5 = GL.GetUniformLocation(programID, "light5.intensity");
+	        uniform_lightposition6 = GL.GetUniformLocation(programID, "light6.position");
+	        uniform_lightintensity6 = GL.GetUniformLocation(programID, "light6.intensity");
         }
 
 	    // loading shaders

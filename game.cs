@@ -17,7 +17,7 @@ namespace Template_P3 {
         float speed = 1;
         public bool pressed, car;
 	    const float PI = 3.1415926535f;			// PI
-        private float a = PI/2f, b = 0, c = 0, x =0, y =0, z =0;		// teapot rotation angle
+        private float a = PI/2f;
 	    Stopwatch timer;                        // timer for measuring frame duration
         int teller = 0;		// shader to use for rendering
 	    Shader postproc;						// shader to use for post processing
@@ -26,7 +26,7 @@ namespace Template_P3 {
         RenderTarget target;					// intermediate render target
 	    ScreenQuad quad;						// screen filling quad for post processing
 	    bool useRenderTarget = true;
-        private  KeyboardState oldKeyboardState = OpenTK.Input.Keyboard.GetState();
+        private  KeyboardState oldKeyboardState, newKeyboardState;
         private Vector3 cam_pos;
         private float cam_x, cam_z = -90;
 
@@ -58,61 +58,37 @@ namespace Template_P3 {
 
         public void Control(KeyboardState keyState)
         {
+            newKeyboardState = keyState;
             float frameDuration = timer.ElapsedMilliseconds;
             timer.Reset();
             timer.Start();
             Vector3 direction = new Vector3((float)Math.Sin(cam_x) * (float)Math.Sin(cam_z), (float)Math.Cos(cam_z), (float)Math.Cos(cam_x) * (float)Math.Sin(cam_z));
 
-            if (car)
-            {
-                if (keyState[Key.D] && (keyState[Key.W] || keyState[Key.S]))
-                { scene.car.modelmatrix *= Matrix4.CreateRotationY(-0.01f); }//scene.view *= Matrix4.CreateRotationY(0.01f); }
-                                if (keyState[Key.A] && (keyState[Key.W] || keyState[Key.S]))
-                    scene.car.modelmatrix *= Matrix4.CreateRotationY(0.01f);
-                if (keyState[Key.W])
-                    scene.car.modelmatrix *= Matrix4.CreateTranslation(0, 0, -1);
-                if (keyState[Key.S])
-                    scene.car.modelmatrix *= Matrix4.CreateTranslation(0, 0, 1);
-
-
-                if (keyState[Key.Up])
-                    cam_pos -= new Vector3(-direction.X, 0, direction.Z) * speed;
-                if (keyState[Key.Down])
-                    cam_pos += new Vector3(-direction.X, 0, direction.Z) * speed;
-                if (keyState[Key.Left])
-                    cam_pos -= new Vector3(direction.Z, 0, direction.X) * speed;
-                if (keyState[Key.Right])
-                    cam_pos += new Vector3(direction.Z, 0, direction.X) * speed;
-                scene.update();
-                
-            }
-            else
-            {
-                if (keyState[Key.Left])
-                    cam_x -= 0.1f;
-                if (keyState[Key.Right])
-                    cam_x += 0.1f;
-                if (keyState[Key.Up])
-                    cam_z -= 0.1f;
-                if (keyState[Key.Down])
-                    cam_z += 0.1f;
-                /*if (keyState[Key.Z])
-                    cam_dir.Z -= 0.1f;
-                if (keyState[Key.X])
-                    cam_dir.Z += 0.1f;*/
-                if (keyState[Key.W])
-                    cam_pos -= new Vector3(-direction.X, 0, direction.Z) * speed;
-                if (keyState[Key.S])
-                    cam_pos += new Vector3(-direction.X, 0, direction.Z) * speed;
-                if (keyState[Key.A])
-                    cam_pos -= new Vector3(direction.Z, 0, direction.X) * speed;
-                if (keyState[Key.D])
-                    cam_pos += new Vector3(direction.Z, 0, direction.X) * speed;
-                if (keyState[Key.Q])
-                    cam_pos -= new Vector3(0, 1, 0) * speed;
-                if (keyState[Key.E])
-                    cam_pos += new Vector3(0, 1, 0) * speed;
-            }
+            
+            if (keyState[Key.Left])
+                cam_x -= 0.1f;
+            if (keyState[Key.Right])
+                cam_x += 0.1f;
+            if (keyState[Key.Up])
+                cam_z -= 0.1f;
+            if (keyState[Key.Down])
+                cam_z += 0.1f;
+            /*if (keyState[Key.Z])
+                cam_dir.Z -= 0.1f;
+            if (keyState[Key.X])
+                cam_dir.Z += 0.1f;*/
+            if (keyState[Key.W])
+                cam_pos -= new Vector3(-direction.X, 0, direction.Z) * speed;
+            if (keyState[Key.S])
+                cam_pos += new Vector3(-direction.X, 0, direction.Z) * speed;
+            if (keyState[Key.A])
+                cam_pos -= new Vector3(direction.Z, 0, direction.X) * speed;
+            if (keyState[Key.D])
+                cam_pos += new Vector3(direction.Z, 0, direction.X) * speed;
+            if (keyState[Key.Q])
+                cam_pos -= new Vector3(0, 1, 0) * speed;
+            if (keyState[Key.E])
+                cam_pos += new Vector3(0, 1, 0) * speed;
             if (keyState[Key.ShiftLeft])
             {
                 cam_x = 0;
@@ -120,16 +96,13 @@ namespace Template_P3 {
                 cam_pos = new Vector3(0,0,0);
                 car = false;
             }
-          
-                //x -= 0.001f * frameDuration;
-                scene.view *= Matrix4.CreateTranslation(-1 * speed, 0, 0);
             if (keyState[Key.J] && !pressed)
             { speed /= 2; teller = 0; pressed = true; }
             if (keyState[Key.K] && !pressed)
             { speed *= 2; teller = 0; pressed = true; }
             if (speed < 0)
                 speed = 0;
-           if (keyState[Key.ControlLeft])
+            if (keyState[Key.ControlLeft])
                 speed = 1;
             if (keyState[Key.Tab])
             {
@@ -150,27 +123,33 @@ namespace Template_P3 {
                     var keyboard = OpenTK.Input.Keyboard.GetState();
                     Control(keyboard);
                 }
-                catch(Exception e)
+                catch(Exception)
                 {
                     Console.WriteLine("something went wrong please try again.");
                     var keyboard = OpenTK.Input.Keyboard.GetState();
                     Control(keyboard);
                 }
             }
-            if (keyState[Key.P])
-            { car = !car;  }
+
+            if (keyState[Key.Space])
+                scene.brake = true;
+            else
+                scene.brake = false;
             if (keyState[Key.R])
-                scene.car.modelmatrix = Matrix4.CreateRotationY(scene.rotation);
-                oldKeyboardState = keyState;
+                scene.car.modelmatrix = Matrix4.CreateRotationY(PI);
+            
+            oldKeyboardState = keyState;
         }
-    
-        void cameraUpdate()
+
+        public bool NewKeyPress(Key key)
         {
-            scene.view = scene.car.modelmatrix * Matrix4.CreateRotationY(scene.rotation);
+            return (oldKeyboardState[key] && (newKeyboardState[key] != oldKeyboardState[key]));
         }
+        
 	    // tick for OpenGL rendering code
 	    public void RenderGL()
 	    {
+            scene.RotateCar();
             // measure frame duration
             teller++;
             if (teller > 30)

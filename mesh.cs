@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
@@ -79,20 +80,10 @@ namespace Template_P3 {
 	    }
 
 	// render the mesh using the supplied shader and matrix
-	public void Render( Shader shader )
-	{
-            //Matrix4 loc = transform * Matrix4.CreateTranslation(x, y, z);
-            //if (parent != null)
-            //    loc *= Matrix4.CreateTranslation(parent.x, parent.y, parent.z);
-            //Matrix4 MV = loc;
-            //loc *= Matrix4.CreatePerspectiveFieldOfView(1.2f, 1.3f, .1f, 1000);
-
-            //meshTree[i].transform = meshTree[i].modelMatrix * viewMatrix * projectionMatrix;
-
-            
-
-                // on first run, prepare buffers
-                Prepare( shader );
+	    public void Render( Shader shader, Matrix4 view )
+	    {
+            // on first run, prepare buffers
+            Prepare( shader );
 
             // enable texture
             if (texture != null)
@@ -102,21 +93,42 @@ namespace Template_P3 {
                 GL.ActiveTexture(TextureUnit.Texture0);
                 GL.BindTexture(TextureTarget.Texture2D, texture.id);
             }
-
-            
-
 		    // enable shader
 		    GL.UseProgram( shader.programID );
+	        List<Light> lights = SceneGraph.lights;
+            // set light variables
+	        Vector4 ambient = new Vector4(0.1f, 0.1f, 0.1f, 0);
 
-            Vector3 position = new Vector3(0, 10, 0);
-            Vector3 intensity = new Vector3(1000, 1000, 1000);
-            Vector4 ambient = new Vector4(1,1,1,1);
+            Matrix4 position1 = lights[0].position * lights[0].parentmatrix * view;
+	        Matrix4 position2 = lights[1].position * lights[1].parentmatrix * view;
+	        Matrix4 position3 = lights[2].position * lights[2].parentmatrix * view;
+	        Matrix4 position4 = lights[3].position * lights[3].parentmatrix * view;
+	        Matrix4 position5 = lights[4].position * lights[4].parentmatrix * view;
+	        Matrix4 position6 = lights[5].position * lights[5].parentmatrix * view;
 
-	        GL.Uniform3(shader.uniform_lightintensity, ref intensity);
-	        GL.Uniform3(shader.uniform_lightposition, ref position);
+            Vector3 intensity1 = lights[0].intensity;
+	        Vector3 intensity2 = lights[1].intensity;
+	        Vector3 intensity3 = lights[2].intensity;
+	        Vector3 intensity4 = lights[3].intensity;
+	        Vector3 intensity5 = lights[4].intensity;
+	        Vector3 intensity6 = lights[5].intensity;
+            // pass them to the shader
+            GL.Uniform3(shader.uniform_lightintensity1, ref intensity1);
+	        GL.Uniform3(shader.uniform_lightintensity2, ref intensity2);
+	        GL.Uniform3(shader.uniform_lightintensity3, ref intensity3);
+	        GL.Uniform3(shader.uniform_lightintensity4, ref intensity4);
+	        GL.Uniform3(shader.uniform_lightintensity5, ref intensity5);
+	        GL.Uniform3(shader.uniform_lightintensity6, ref intensity6);
             GL.Uniform4(shader.uniform_ambient, ref ambient);
 
-            // pass transform to vertex shader
+            GL.UniformMatrix4(shader.uniform_lightposition1, false, ref position1);
+	        GL.UniformMatrix4(shader.uniform_lightposition2, false, ref position2);
+	        GL.UniformMatrix4(shader.uniform_lightposition3, false, ref position3);
+	        GL.UniformMatrix4(shader.uniform_lightposition4, false, ref position4);
+	        GL.UniformMatrix4(shader.uniform_lightposition5, false, ref position5);
+	        GL.UniformMatrix4(shader.uniform_lightposition6, false, ref position6);
+
+	        // pass transform to vertex shader
             GL.UniformMatrix4( shader.uniform_mview, false, ref transform );
             GL.UniformMatrix4( shader.uniform_mv, false, ref MV);
 
@@ -129,11 +141,11 @@ namespace Template_P3 {
 		    GL.VertexAttribPointer( shader.attribute_vuvs, 2, VertexAttribPointerType.Float, false, 32, 0 );
 		    GL.VertexAttribPointer( shader.attribute_vnrm, 3, VertexAttribPointerType.Float, true, 32, 2 * 4 );
 		    GL.VertexAttribPointer( shader.attribute_vpos, 3, VertexAttribPointerType.Float, false, 32, 5 * 4 );
-			GL.VertexAttrib1(shader.attribute_spec, spec);
-			GL.VertexAttrib1(shader.attribute_diffPerc, diffPerc);
+		    GL.VertexAttrib1(shader.attribute_spec, spec);
+		    GL.VertexAttrib1(shader.attribute_diffPerc, diffPerc);
 
-			// enable position, normal and uv attributes
-			GL.EnableVertexAttribArray( shader.attribute_vpos );
+		    // enable position, normal and uv attributes
+		    GL.EnableVertexAttribArray( shader.attribute_vpos );
             GL.EnableVertexAttribArray( shader.attribute_vnrm );
             GL.EnableVertexAttribArray( shader.attribute_vuvs );
 
@@ -154,8 +166,8 @@ namespace Template_P3 {
 
        
 
-            // layout of a single vertex
-            [StructLayout(LayoutKind.Sequential)] public struct ObjVertex
+        // layout of a single vertex
+        [StructLayout(LayoutKind.Sequential)] public struct ObjVertex
 	    {
 		    public Vector2 TexCoord;
 		    public Vector3 Normal;
@@ -171,11 +183,35 @@ namespace Template_P3 {
 	    // layout of a single quad
 	    [StructLayout(LayoutKind.Sequential)] public struct ObjQuad
 	    {
-		    public int Index0, Index1, Index2, Index3;
+	        public int Index0, Index1, Index2, Index3;
 	    }
 
     }
 
-    
+    public struct Light
+    {
+        public Matrix4 position;
 
+        public Matrix4 parentmatrix
+        {
+            get
+            {
+                if(parent!=null)
+                    return parent.modelmatrix;
+                return Matrix4.Identity;
+            }
+        }
+
+        public Vector3 intensity;
+        public Mesh parent;
+
+        public Light(Matrix4 position, Vector3 intensity, Mesh parent = null)
+        {
+            this.position = position;
+            this.intensity = intensity;
+            this.parent = parent;
+            if (parent != null)
+            this.position *= parent.modelmatrix;
+        }
+    }
 } // namespace Template_P3
