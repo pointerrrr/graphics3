@@ -2,15 +2,15 @@
 // light struct
 struct Light
 {
-	vec3 position;
+	mat4 position;
 	vec3 intensity;
 };
 
 // shader input
 in vec2 uv;						// interpolated texture coordinates
 in vec4 normal;					// interpolated normal
-in float diffuse;
-in float specular;
+in vec3 diffuse;
+in vec3 specular;
 
 
 
@@ -18,13 +18,19 @@ in float specular;
 out vec4 outputColor;
 
 // uniform variables
-uniform Light light;
+uniform Light light1;
+uniform Light light2;
+uniform Light light3;
+uniform Light light4;
 uniform vec4 ambient;
 uniform sampler2D pixels;		// texture sampler
 
 // fragment shader
 void main()
 {
-	vec4 intensity4 = vec4(light.intensity, 1.0);
-	outputColor = texture( pixels, uv ) * diffuse * intensity4 + texture( pixels, uv ) * specular * intensity4 + ambient * 0.1;
+	//vec4 intensity4 = vec4(light1.intensity, 1.0);
+	vec4 diffuse2 = vec4(diffuse, 1.0);
+	vec4 specular2 = vec4(specular, 1.0);
+	outputColor = texture( pixels, uv ) * diffuse2  + texture( pixels, uv ) * specular2  + ambient * texture(pixels, uv) ;
+	
 }
