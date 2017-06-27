@@ -85,15 +85,15 @@ namespace Template_P3 {
                 car = false;
             }
             if (NewKeyPress(Key.J))
-            { speed /= 2;}
+                speed /= 2;
             if (NewKeyPress(Key.K))
-            { speed *= 2;  }
+                speed *= 2;
             if (speed < 0)
                 speed = 0;
             if (keyState[Key.ControlLeft])
                 speed = 1;
             if (NewKeyPress(Key.Tab))
-            LoadModel();
+                LoadModel();
             if (keyState[Key.Space])
                 scene.brake = true;
             else
@@ -121,14 +121,10 @@ namespace Template_P3 {
                     scene.lijst.Add(new Mesh(loc, Matrix4.CreateTranslation(tx, ty, tz), null, float.Parse(spec), 1 - float.Parse(specpercentage)));
                 else
                     scene.lijst.Add(new Mesh(loc, Matrix4.CreateTranslation(tx, ty, tz), new Texture(tex), float.Parse(spec), float.Parse(specpercentage)));
-                var keyboard = Keyboard.GetState();
-                Control(keyboard);
             }
             catch (Exception)
             {
                 Console.WriteLine("something went wrong please try again.");
-                var keyboard = Keyboard.GetState();
-                Control(keyboard);
             }
         } // LoadModel
 
