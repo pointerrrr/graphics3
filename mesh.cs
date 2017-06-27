@@ -13,6 +13,8 @@ namespace Template_P3 {
         public Mesh parent;
         public Matrix4 modelmatrix, transform, MV, origin; 
         Texture texture;
+		public float spec = 100;
+		public float diffPerc = 0.5f;
         const float PI = 3.1415926535f;
         public Matrix4 location;
 	    public ObjVertex[] vertices;			// vertex positions, model space
@@ -22,25 +24,29 @@ namespace Template_P3 {
 	    int triangleBufferId;					// triangle buffer
 	    int quadBufferId;						// quad buffer
 
-	// constructor
-	public Mesh( string fileName,Matrix4 model, Texture text = null )
-	{
-		MeshLoader loader = new MeshLoader();
-		loader.Load( this, fileName );
-            texture = text;
-            modelmatrix = model;
+		// constructor
+		public Mesh( string fileName,Matrix4 model, Texture text = null, float specularity = 0, float diffusePerc = 1)
+		{
+			MeshLoader loader = new MeshLoader();
+			loader.Load( this, fileName );
+			texture = text;
+			modelmatrix = model;
+			spec = specularity;
+			diffPerc = diffusePerc;
+		}
 
-	    }
+		public Mesh(string fileName, Matrix4 model, Mesh parent, Texture text = null, float specularity = 0, float diffusePerc = 1)
+		{
+			MeshLoader loader = new MeshLoader();
+			loader.Load(this, fileName);
+				texture = text;
+			this.parent = parent;
+			spec = specularity;
+			diffPerc = diffusePerc;
+			origin = model;
+			modelmatrix =  model * parent.modelmatrix;
+		}
 
-    public Mesh(string fileName, Matrix4 model, Mesh parent, Texture text = null)
-    {
-        MeshLoader loader = new MeshLoader();
-        loader.Load(this, fileName);
-            texture = text;
-        this.parent = parent;
-        origin = model;
-        modelmatrix =  model * parent.modelmatrix;
-    }
         public void update()
         {
             if (this.parent != null)
@@ -110,8 +116,6 @@ namespace Template_P3 {
 	        GL.Uniform3(shader.uniform_lightposition, ref position);
             GL.Uniform4(shader.uniform_ambient, ref ambient);
 
-            
-
             // pass transform to vertex shader
             GL.UniformMatrix4( shader.uniform_mview, false, ref transform );
             GL.UniformMatrix4( shader.uniform_mv, false, ref MV);
@@ -125,9 +129,11 @@ namespace Template_P3 {
 		    GL.VertexAttribPointer( shader.attribute_vuvs, 2, VertexAttribPointerType.Float, false, 32, 0 );
 		    GL.VertexAttribPointer( shader.attribute_vnrm, 3, VertexAttribPointerType.Float, true, 32, 2 * 4 );
 		    GL.VertexAttribPointer( shader.attribute_vpos, 3, VertexAttribPointerType.Float, false, 32, 5 * 4 );
+			GL.VertexAttrib1(shader.attribute_spec, spec);
+			GL.VertexAttrib1(shader.attribute_diffPerc, diffPerc);
 
-            // enable position, normal and uv attributes
-            GL.EnableVertexAttribArray( shader.attribute_vpos );
+			// enable position, normal and uv attributes
+			GL.EnableVertexAttribArray( shader.attribute_vpos );
             GL.EnableVertexAttribArray( shader.attribute_vnrm );
             GL.EnableVertexAttribArray( shader.attribute_vuvs );
 

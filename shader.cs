@@ -12,6 +12,8 @@ namespace Template_P3 {
 	    public int attribute_vpos;
 	    public int attribute_vnrm;
 	    public int attribute_vuvs;
+		public int attribute_spec;
+		public int attribute_diffPerc;
 	    public int uniform_mview;
         public int uniform_mv;
         public int uniform_lightposition;
@@ -33,6 +35,8 @@ namespace Template_P3 {
 		    attribute_vpos = GL.GetAttribLocation( programID, "vPosition" );
 		    attribute_vnrm = GL.GetAttribLocation( programID, "vNormal" );
 		    attribute_vuvs = GL.GetAttribLocation( programID, "vUV" );
+			attribute_spec = GL.GetAttribLocation( programID, "spec");
+			attribute_diffPerc = GL.GetAttribLocation( programID, "diffPerc");
 		    uniform_mview = GL.GetUniformLocation( programID, "transform" );
 	        uniform_mv = GL.GetUniformLocation(programID, "MV");
 	        uniform_lightposition = GL.GetUniformLocation(programID, "light.position");

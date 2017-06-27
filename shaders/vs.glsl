@@ -11,7 +11,8 @@ struct Light
 in vec2 vUV;				// vertex uv coordinate
 in vec3 vNormal;			// untransformed vertex normal
 in vec3 vPosition;			// untransformed vertex position
-
+in float spec;				// specularity of mesh
+in float diffPerc;			// percentage of diffuse lighting
 
 // shader output
 out vec4 normal;			// transformed vertex normal
@@ -37,8 +38,8 @@ void main()
 	vec3 H = normalize(V + lightVector);
 	float specDot = dot(modelViewNormal, H);	
 	float attenuation = 1 / (distance * distance);	
-	specular = pow(max(0, specDot),100) * attenuation;
-	diffuse = diffuse * attenuation;		
+	specular = pow(max(0, specDot),spec) * attenuation * (1 - diffPerc);
+	diffuse = diffuse * attenuation * diffPerc;		
 	
 	// transform vertex using supplied matrix
 	gl_Position = transform * vec4(vPosition, 1.0);

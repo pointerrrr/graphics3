@@ -34,8 +34,8 @@ namespace Template_P3
             Texture feuxl = new Texture("../../assets/car/feuxl.jpg");
             // load teapot
             car = new Mesh("../../assets/car/frame.obj", Matrix4.CreateRotationY(rotation), frame);
-            lijst.Add(new Mesh("../../assets/teapot.obj", Matrix4.CreateTranslation(-16,0,-15) , wood));
-            lijst.Add(new Mesh("../../assets/teapot.obj", Matrix4.CreateTranslation(16,0,0), lijst[0], wood));
+            lijst.Add(new Mesh("../../assets/teapot.obj", Matrix4.CreateTranslation(-16,0,-15) , wood, 100f, 0.5f));
+            lijst.Add(new Mesh("../../assets/teapot.obj", Matrix4.CreateTranslation(16,0,0), lijst[0], wood, 100f, 0.7f));
             lijst.Add(car);
             
             
